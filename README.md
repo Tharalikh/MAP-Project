@@ -1,4 +1,4 @@
-# festquest
+# FestQuest
 
 A new Flutter project.
 
