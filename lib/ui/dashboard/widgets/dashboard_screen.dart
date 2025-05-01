@@ -13,7 +13,10 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('FestQuest'),
         actions: [
-          const Icon(Icons.notifications_none),
+          IconButton(
+            icon: const Icon(Icons.notifications_none),
+            onPressed: () => Navigator.pushNamed(context, ''),
+          ),
           const SizedBox(width: 10),
           IconButton(
             icon: const Icon(Icons.person_outline),
