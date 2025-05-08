@@ -15,7 +15,7 @@ class DashboardScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none),
-            onPressed: () => Navigator.pushNamed(context, ''),
+            onPressed: () => Navigator.pushNamed(context, '/notification'),
           ),
           const SizedBox(width: 10),
           IconButton(
@@ -23,13 +23,6 @@ class DashboardScreen extends StatelessWidget {
             onPressed: () => Navigator.pushNamed(context, '/profile'),
           ),
           const SizedBox(width: 10),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.confirmation_num), label: ''),
         ],
       ),
       body: ListView(

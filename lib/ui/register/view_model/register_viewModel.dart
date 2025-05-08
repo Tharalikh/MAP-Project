@@ -3,7 +3,9 @@ import '../../../data/services/service.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   String _username = '';
+  String _profileName = '';
   String _email = '';
+  String _phoneNum = '';
   String _password = '';
   String _confirmPassword = '';
 
@@ -12,8 +14,18 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProfileName(String value) {
+    _profileName = value;
+    notifyListeners();
+  }
+
   void setEmail(String value) {
     _email = value;
+    notifyListeners();
+  }
+
+  void setPhoneNum(String value) {
+    _phoneNum = value;
     notifyListeners();
   }
 
@@ -29,6 +41,6 @@ class RegisterViewModel extends ChangeNotifier {
 
   Future<bool> register() async {
     if (_password != _confirmPassword) return false;
-    return await AuthService.mockRegister(_username, _email, _password);
+    return await AuthService.mockRegister(_username, _profileName, _email, _phoneNum, _password);
   }
 }

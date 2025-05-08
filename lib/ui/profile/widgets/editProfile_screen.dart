@@ -18,12 +18,12 @@ class EditProfileScreen extends StatelessWidget {
             const CircleAvatar(radius: 40),
             const Text('@username'),
             TextField(
-              decoration: const InputDecoration(labelText: 'Profile Name'),
-              onChanged: vm.setProfileName,
+              decoration: const InputDecoration(labelText: 'Username'),
+              onChanged: vm.setUserName,
             ),
             TextField(
-              decoration: const InputDecoration(labelText: 'IC/Passport Number'),
-              onChanged: vm.setIcPassport,
+              decoration: const InputDecoration(labelText: 'Profile Name'),
+              onChanged: vm.setProfileName,
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Email'),

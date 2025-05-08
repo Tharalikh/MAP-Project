@@ -23,8 +23,16 @@ class RegisterScreen extends StatelessWidget {
               onChanged: vm.setUsername,
             ),
             TextField(
+              decoration: const InputDecoration(labelText: 'Profile Name'),
+              onChanged: vm.setProfileName,
+            ),
+            TextField(
               decoration: const InputDecoration(labelText: 'Email'),
               onChanged: vm.setEmail,
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+              onChanged: vm.setPhoneNum,
             ),
             TextField(
               obscureText: true,

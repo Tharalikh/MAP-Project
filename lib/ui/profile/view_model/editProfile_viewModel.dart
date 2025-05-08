@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class EditProfileViewModel extends ChangeNotifier {
+  String userName = '';
   String profileName = '';
-  String icPassport = '';
   String email = '';
   String phone = '';
 
@@ -11,8 +11,8 @@ class EditProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setIcPassport(String value) {
-    icPassport = value;
+  void setUserName(String value) {
+    userName = value;
     notifyListeners();
   }
 
