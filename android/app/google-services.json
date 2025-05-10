@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "105163735310",
+    "project_id": "map-project-kopikanan",
+    "storage_bucket": "map-project-kopikanan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105163735310:android:a66dc1ae4a64a308c7575f",
+        "android_client_info": {
+          "package_name": "com.example.festquest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0tsnUnVFCBh_KUDCNmTIoB5Xmc56kF_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

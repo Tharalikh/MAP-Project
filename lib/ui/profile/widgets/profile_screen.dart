@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/profile_viewModel.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import '../../login/view_model/auth_gate.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -8,9 +10,10 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<ProfileViewModel>(context);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(30.0),
         children: [
@@ -36,12 +39,13 @@ class ProfileScreen extends StatelessWidget {
           const ListTile(leading: Icon(Icons.history), title: Text('Transaction History')),
           const ListTile(leading: Icon(Icons.lock), title: Text('Privacy and Security')),
           const ListTile(leading: Icon(Icons.credit_card), title: Text('Payment Method')),
-          TextButton(onPressed: () {}, child: const Text('Have an event?')),
-          ElevatedButton(
-            onPressed: () => vm.logout(context),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-            child: const Text('Sign out'),
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/create_event');
+            },
+            child: const Text("Have an event?"),
           ),
+          SignOutButton(),
         ],
       ),
     );

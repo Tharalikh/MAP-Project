@@ -61,6 +61,10 @@ class _TicketList extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             leading: Container(
+              child: Image.asset(
+                'assets/images/1.png',
+                fit: BoxFit.cover,
+              ),
               width: 50,
               height: 50,
               color: Colors.grey[300],

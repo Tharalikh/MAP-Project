@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../view_model/login_viewModel.dart';
+//import 'package:provider/provider.dart';
+//import '../view_model/login_viewModel.dart';
+import '../view_model/auth_gate.dart';
 
-class LoginScreen extends StatelessWidget {
+/*class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
@@ -43,14 +44,36 @@ class LoginScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/register'),
-              child: const Text(
+              child:
+              const Text(
                 "Don’t have account?",
+                style: TextStyle(decoration: TextDecoration.underline),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/register'),
+              child:
+              const Text(
+                "Forgot password?",
                 style: TextStyle(decoration: TextDecoration.underline),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}*/
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const AuthGate(),
     );
   }
 }
