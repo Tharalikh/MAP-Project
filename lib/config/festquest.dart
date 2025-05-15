@@ -1,10 +1,13 @@
-import 'package:festquest/ui/login/view_model/auth_gate.dart';
-import 'package:festquest/ui/ticket/view_model/my_event_viewModel.dart';
+//import 'package:festquest/ui/login/view_model/auth_gate.dart';
+//import 'package:festquest/ui/ticket/view_model/my_event_viewModel.dart';
+import 'package:festquest/ui/purchase/widgets/payment_form_screen.dart';
+import 'package:festquest/ui/purchase/widgets/subs_payment_screen.dart';
 import 'package:flutter/material.dart';
 import '../ui/login/widgets/login_screen.dart';
 import '../ui/register/widgets/register_screen.dart';
 import '../ui/profile/widgets/profile_screen.dart';
 import '../ui/profile/widgets/editProfile_screen.dart';
+import '../ui/purchase/widgets/subscription_screen.dart';
 import '../ui/profile/widgets/create_event_screen.dart';
 import '../ui/notification/widgets/notification_screen.dart';
 import '../ui/core/themes/main_scaffold.dart';
@@ -13,7 +16,7 @@ import '../ui/purchase/widgets/payment_confirm_screen.dart';
 import '../ui/purchase/widgets/payment_screen.dart';
 import '../ui/purchase/widgets/ticket_barcode_screen.dart';
 import '../ui/ticket/widgets/my_event_screen.dart';
-import '../ui/login/view_model/auth_gate.dart';
+//import '../ui/login/view_model/auth_gate.dart';
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});
@@ -25,11 +28,16 @@ class FestQuestApp extends StatelessWidget {
       title: 'FestQuest',
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthGate(),
+        '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/dashboard': (context) => const MainScaffold(),
         '/profile': (context) => const ProfileScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),
+        '/subscription': (context) => const SubscriptionScreen(),
+        '/subscription/payment_method':
+            (context) => const SubscriptionPaymentMethodScreen(),
+        '/subscription/payment_form':
+            (context) => const SubscriptionPaymentFormScreen(),
         '/create_event': (context) => const CreateEventScreen(),
         '/notification': (context) => const NotificationScreen(),
         '/ticket': (context) => const MainScaffold(),

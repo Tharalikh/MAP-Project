@@ -10,25 +10,25 @@ import 'ui/login/view_model/login_viewModel.dart';
 import 'ui/dashboard/view_model/dashboard_viewModel.dart';
 import 'ui/profile/view_model/profile_viewModel.dart';
 import 'ui/profile/view_model/editProfile_viewModel.dart';
+import 'package:festquest/ui/purchase/view_model/subscription_viewModel.dart';
 import 'ui/notification/view_model/notification_viewModel.dart';
 import 'ui/search/view_model/search_viewModel.dart';
 import 'ui/ticket/view_model/ticket_viewModel.dart';
 import 'ui/purchase/view_model/purchase_viewModel.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     MultiProvider(
       providers: [
-        /*ChangeNotifierProvider(create: (_) => RegisterViewModel()),
-        ChangeNotifierProvider(create: (_) => LoginViewModel()),*/
+        ChangeNotifierProvider(create: (_) => RegisterViewModel()),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => SearchViewModel()),
         ChangeNotifierProvider(create: (_) => TicketViewModel()),

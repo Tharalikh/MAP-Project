@@ -8,6 +8,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<PurchaseViewModel>(context);
+    final String method = ModalRoute.of(context)?.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Confirm Payment")),
@@ -27,6 +28,24 @@ class ConfirmPaymentScreen extends StatelessWidget {
               Text("Total Price: \$${vm.total.toStringAsFixed(2)}"),
               const SizedBox(height: 20),
               Text("Payment Method: ${vm.paymentMethod}"),
+              if (method == 'E-Money')
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Wallet ID'),
+                )
+              else ...[
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Card Number'),
+                ),
+                TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Cardholder Name',
+                  ),
+                ),
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Expiry Date'),
+                ),
+                TextField(decoration: const InputDecoration(labelText: 'CVV')),
+              ],
               const Spacer(),
               Center(
                 child: ElevatedButton(

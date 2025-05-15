@@ -24,21 +24,33 @@ class PaymentMethodScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   vm.setPaymentMethod("Debit");
-                  Navigator.pushNamed(context, '/payment_confirm');
+                  Navigator.pushNamed(
+                    context,
+                    '/payment_confirm',
+                    arguments: "Debit Card",
+                  );
                 },
                 child: const Text("Debit"),
               ),
               ElevatedButton(
                 onPressed: () {
                   vm.setPaymentMethod("Credit");
-                  Navigator.pushNamed(context, '/payment_confirm');
+                  Navigator.pushNamed(
+                    context,
+                    '/payment_confirm',
+                    arguments: "Credit Card",
+                  );
                 },
                 child: const Text("Credit"),
               ),
               ElevatedButton(
                 onPressed: () {
                   vm.setPaymentMethod("E-Wallet");
-                  Navigator.pushNamed(context, '/payment_confirm');
+                  Navigator.pushNamed(
+                    context,
+                    '/payment_confirm',
+                    arguments: "E-Money",
+                  );
                 },
                 child: const Text("E-Wallet"),
               ),
