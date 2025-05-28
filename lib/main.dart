@@ -15,6 +15,7 @@ import 'ui/notification/view_model/notification_viewModel.dart';
 import 'ui/search/view_model/search_viewModel.dart';
 import 'ui/ticket/view_model/ticket_viewModel.dart';
 import 'ui/purchase/view_model/purchase_viewModel.dart';
+import 'ui/login/view_model/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
