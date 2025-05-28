@@ -13,14 +13,11 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return SignInScreen(
-            providers: [
-              EmailAuthProvider(),
-            ],
+            providers: [EmailAuthProvider()],
             headerBuilder: (context, constraints, shrinkOffset) {
               return Padding(
                 padding: const EdgeInsets.all(20),
-                child:
-                const Text('FestQuest', style: TextStyle(fontSize: 30)),
+                child: const Text('FestQuest', style: TextStyle(fontSize: 30)),
               );
             },
           );

@@ -1,15 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../view_model/dashboard_viewModel.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<DashboardViewModel>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('FestQuest'),
@@ -38,9 +34,16 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, {required String title, required int itemCount}) {
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required int itemCount,
+  }) {
     final bool isRecommended = title == 'Recommended';
-    final List<String> posters = List.generate(15, (index) => 'assets/images/${index + 1}.png');
+    final List<String> posters = List.generate(
+      15,
+      (index) => 'assets/images/${index + 1}.png',
+    );
     final random = Random();
 
     final content = Column(
@@ -48,7 +51,10 @@ class DashboardScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
         SizedBox(
           height: 160,
@@ -62,7 +68,11 @@ class DashboardScreen extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/event_detail', arguments: index);
+                  Navigator.pushNamed(
+                    context,
+                    '/event_detail',
+                    arguments: index,
+                  );
                 },
                 child: Container(
                   width: 120,
@@ -83,14 +93,14 @@ class DashboardScreen extends StatelessWidget {
 
     return isRecommended
         ? Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: content,
-    )
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: content,
+        )
         : content;
   }
 }

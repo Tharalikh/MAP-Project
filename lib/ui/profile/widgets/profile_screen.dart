@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/profile_viewModel.dart';
-//import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-//import '../../login/view_model/auth_gate.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import '../../login/view_model/auth_gate.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -72,6 +72,7 @@ class ProfileScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
             child: const Text('Sign out'),
           ),
+          const SignOutButton(),
         ],
       ),
     );

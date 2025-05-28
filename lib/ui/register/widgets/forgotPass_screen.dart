@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/register_viewModel.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class ForgotpassScreen extends StatelessWidget {
+  const ForgotpassScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,22 +15,6 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           children: [
             const Align(alignment: Alignment.topLeft, child: BackButton()),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Username'),
-              onChanged: vm.setUsername,
-            ),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Profile Name'),
-              onChanged: vm.setProfileName,
-            ),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Email'),
-              onChanged: vm.setEmail,
-            ),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Phone Number'),
-              onChanged: vm.setPhoneNum,
-            ),
             TextField(
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
