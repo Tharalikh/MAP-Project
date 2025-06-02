@@ -1,8 +1,8 @@
+import 'package:festquest/ui/login/widgets/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/profile_viewModel.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import '../../login/view_model/auth_gate.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -67,12 +67,16 @@ class ProfileScreen extends StatelessWidget {
             },
             child: const Text("Have an event?"),
           ),
-          ElevatedButton(
-            onPressed: () => vm.logout(context),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-            child: const Text('Sign out'),
+        ElevatedButton(
+            child: const Text('Sign Out'),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            },
           ),
-          const SignOutButton(),
         ],
       ),
     );

@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
             const Text('FestQuest', style: TextStyle(fontSize: 30)),
             const SizedBox(height: 40),
             TextField(
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: const InputDecoration(labelText: 'Email'),
               onChanged: vm.setUsername,
             ),
             TextField(

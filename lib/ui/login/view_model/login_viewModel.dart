@@ -16,6 +16,6 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<bool> login() async {
-    return await AuthService.mockLogin(_username, _password);
+    return await AuthService.login(_username, _password);
   }
 }

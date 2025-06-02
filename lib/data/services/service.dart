@@ -1,7 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class AuthService {
-  static Future<bool> mockLogin(String username, String password) async {
-    await Future.delayed(const Duration(seconds: 1)); // simulate network delay
-    return username == 'user' && password == 'user123';
+  static Future<bool> login(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return true;
+    } catch (e) {
+      print('Firebase login failed: $e');
+      return false;
+    }
   }
 
   static Future<bool> mockRegister(

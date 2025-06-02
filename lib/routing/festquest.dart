@@ -15,6 +15,7 @@ import '../ui/purchase/widgets/payment_confirm_screen.dart';
 import '../ui/purchase/widgets/payment_screen.dart';
 import '../ui/purchase/widgets/ticket_barcode_screen.dart';
 import '../ui/ticket/widgets/my_event_screen.dart';
+import '../ui/login/widgets/login_screen.dart';
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});
@@ -26,7 +27,7 @@ class FestQuestApp extends StatelessWidget {
       title: 'FestQuest',
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthGate(),
+        '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/forgot': (context) => const ForgotpassScreen(),
         '/dashboard': (context) => const MainScaffold(),
