@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:festquest/firebase_options.dart';
-import 'config/festquest.dart';
+import 'routing/festquest.dart';
 import 'ui/register/view_model/register_viewModel.dart';
 import 'ui/login/view_model/login_viewModel.dart';
 import 'ui/dashboard/view_model/dashboard_viewModel.dart';

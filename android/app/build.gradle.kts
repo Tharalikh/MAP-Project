@@ -45,3 +45,9 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // ... other dependencies
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0")) // Check for the latest version
+    implementation("com.google.firebase:firebase-firestore-ktx")
+}

@@ -44,6 +44,7 @@ dependencies:
   firebase_ui_auth: ^1.16.1
   cloud_firestore: ^5.6.8
   firebase_storage: ^12.4.6
+  curved_navigation_bar: ^1.0.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3

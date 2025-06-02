@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import '../../dashboard/widgets/dashboard_screen.dart';
 import '../../search/widgets/search_screen.dart';
 import '../../ticket/widgets/ticket_screen.dart';
@@ -29,19 +30,18 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.black,         // active item color
-        unselectedItemColor: Colors.grey,        // inactive item color
-        backgroundColor: Colors.white,           // bar background
-        showUnselectedLabels: true,
-        showSelectedLabels: true,
+        backgroundColor: Colors.white,
+        color: Colors.black,
+        animationDuration: Duration(milliseconds: 500),
+        height: 70,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.confirmation_num), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.local_activity), label: ''),
+          Icon(Icons.home, size: 30, color: Colors.white),
+          Icon(Icons.search, size: 30, color: Colors.white),
+          Icon(Icons.confirmation_num, size: 30, color: Colors.white),
+          Icon(Icons.local_activity, size: 30, color: Colors.white),
         ],
       ),
     );
