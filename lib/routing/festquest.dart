@@ -29,7 +29,7 @@ class FestQuestApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/forgot': (context) => const ForgotpassScreen(),
+        '/forgot': (context) => const ForgotPassScreen(),
         '/dashboard': (context) => const MainScaffold(),
         '/profile': (context) => const ProfileScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),

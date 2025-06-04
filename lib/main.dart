@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:festquest/firebase_options.dart';
 import 'routing/festquest.dart';
 import 'ui/register/view_model/register_viewModel.dart';
+import 'ui/register/view_model/forgot_viewModel.dart';
 import 'ui/login/view_model/login_viewModel.dart';
 import 'ui/dashboard/view_model/dashboard_viewModel.dart';
 import 'ui/profile/view_model/profile_viewModel.dart';
@@ -25,6 +26,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
+        ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(UserModel(uid: '', username: '', password: '', name: '', email: '',phone: '', profilePic: '',),),),
