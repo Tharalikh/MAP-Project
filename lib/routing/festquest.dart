@@ -1,21 +1,20 @@
-import 'package:festquest/ui/login/view_model/auth_gate.dart';
-import 'package:festquest/ui/purchase/widgets/payment_form_screen.dart';
-import 'package:festquest/ui/purchase/widgets/subs_payment_screen.dart';
+import 'package:festquest/view/purchase/widgets/payment_form_screen.dart';
+import 'package:festquest/view/purchase/widgets/subs_payment_screen.dart';
 import 'package:flutter/material.dart';
-import '../ui/register/widgets/register_screen.dart';
-import '../ui/register/widgets/forgotPass_screen.dart';
-import '../ui/profile/widgets/profile_screen.dart';
-import '../ui/profile/widgets/editProfile_screen.dart';
-import '../ui/purchase/widgets/subscription_screen.dart';
-import '../ui/profile/widgets/create_event_screen.dart';
-import '../ui/notification/widgets/notification_screen.dart';
-import '../ui/core/themes/main_scaffold.dart';
-import '../ui/purchase/widgets/event_detail_screen.dart';
-import '../ui/purchase/widgets/payment_confirm_screen.dart';
-import '../ui/purchase/widgets/payment_screen.dart';
-import '../ui/purchase/widgets/ticket_barcode_screen.dart';
-import '../ui/ticket/widgets/my_event_screen.dart';
-import '../ui/login/widgets/login_screen.dart';
+import '../view/register/widgets/register_screen.dart';
+import '../view/register/widgets/forgotPass_screen.dart';
+import '../view/profile/widgets/profile_screen.dart';
+import '../view/profile/widgets/editProfile_screen.dart';
+import '../view/purchase/widgets/subscription_screen.dart';
+import '../view/profile/widgets/create_event_screen.dart';
+import '../view/notification/widgets/notification_screen.dart';
+import '../view/core/themes/main_scaffold.dart';
+import '../view/purchase/widgets/event_detail_screen.dart';
+import '../view/purchase/widgets/payment_confirm_screen.dart';
+import '../view/purchase/widgets/payment_screen.dart';
+import '../view/purchase/widgets/ticket_barcode_screen.dart';
+import '../view/ticket/widgets/my_event_screen.dart';
+import '../view/login/widgets/login_screen.dart';
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});
