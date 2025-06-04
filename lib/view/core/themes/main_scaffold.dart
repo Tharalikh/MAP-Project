@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import '../../dashboard/widgets/dashboard_screen.dart';
-import '../../search/widgets/search_screen.dart';
-import '../../ticket/widgets/ticket_screen.dart';
-import '../../ticket/widgets/my_event_screen.dart';
+import '../../dashboard/dashboard_screen.dart';
+import '../../search/search_screen.dart';
+import '../../ticket/ticket_screen.dart';
+import '../../ticket/my_event_screen.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});

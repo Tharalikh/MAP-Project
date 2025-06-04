@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../view_model/editProfile_viewModel.dart';
+import '../../view_model/editProfile_viewModel.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});

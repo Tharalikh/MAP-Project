@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../view_model/purchase_viewModel.dart';
+import '../../view_model/purchase_viewModel.dart';
 
 class EventDetailScreen extends StatelessWidget {
   const EventDetailScreen({super.key});

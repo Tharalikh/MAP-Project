@@ -1,20 +1,20 @@
-import 'package:festquest/view/purchase/widgets/payment_form_screen.dart';
-import 'package:festquest/view/purchase/widgets/subs_payment_screen.dart';
+import 'package:festquest/view/purchase/payment_form_screen.dart';
+import 'package:festquest/view/purchase/subs_payment_screen.dart';
 import 'package:flutter/material.dart';
-import '../view/register/widgets/register_screen.dart';
-import '../view/register/widgets/forgotPass_screen.dart';
-import '../view/profile/widgets/profile_screen.dart';
-import '../view/profile/widgets/editProfile_screen.dart';
-import '../view/purchase/widgets/subscription_screen.dart';
-import '../view/profile/widgets/create_event_screen.dart';
-import '../view/notification/widgets/notification_screen.dart';
+import '../view/register/register_screen.dart';
+import '../view/register/forgotPass_screen.dart';
+import '../view/profile/profile_screen.dart';
+import '../view/profile/editProfile_screen.dart';
+import '../view/purchase/subscription_screen.dart';
+import '../view/profile/create_event_screen.dart';
+import '../view/notification/notification_screen.dart';
 import '../view/core/themes/main_scaffold.dart';
-import '../view/purchase/widgets/event_detail_screen.dart';
-import '../view/purchase/widgets/payment_confirm_screen.dart';
-import '../view/purchase/widgets/payment_screen.dart';
-import '../view/purchase/widgets/ticket_barcode_screen.dart';
-import '../view/ticket/widgets/my_event_screen.dart';
-import '../view/login/widgets/login_screen.dart';
+import '../view/purchase/event_detail_screen.dart';
+import '../view/purchase/payment_confirm_screen.dart';
+import '../view/purchase/payment_screen.dart';
+import '../view/purchase/ticket_barcode_screen.dart';
+import '../view/ticket/my_event_screen.dart';
+import '../view/login/login_screen.dart';
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});

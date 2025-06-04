@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../view_model/forgot_viewModel.dart';
+import '../../view_model/forgot_viewModel.dart';
 
 class ForgotPassScreen extends StatelessWidget {
   const ForgotPassScreen({super.key});
