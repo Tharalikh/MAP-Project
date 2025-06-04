@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../data/services/service.dart';
+import '../../../data/model/user/user_model.dart';
 
 class LoginViewModel extends ChangeNotifier {
   String _username = '';
@@ -15,7 +16,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login() async {
+  Future<UserModel?> login() async {
     return await AuthService.login(_username, _password);
   }
 }

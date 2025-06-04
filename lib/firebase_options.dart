@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '105163735310',
     projectId: 'map-project-kopikanan',
     storageBucket: 'map-project-kopikanan.firebasestorage.app',
+    iosClientId: '105163735310-59phol8clv9eeo058mjtnnka5na9e58p.apps.googleusercontent.com',
     iosBundleId: 'com.example.festquest',
   );
 
@@ -72,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '105163735310',
     projectId: 'map-project-kopikanan',
     storageBucket: 'map-project-kopikanan.firebasestorage.app',
+    iosClientId: '105163735310-59phol8clv9eeo058mjtnnka5na9e58p.apps.googleusercontent.com',
     iosBundleId: 'com.example.festquest',
   );
 
@@ -83,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'map-project-kopikanan.firebaseapp.com',
     storageBucket: 'map-project-kopikanan.firebasestorage.app',
   );
+
 }

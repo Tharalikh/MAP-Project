@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/login_viewModel.dart';
+import '../../profile/view_model/profile_viewModel.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -29,8 +30,12 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final success = await vm.login();
-                if (success) {
+                final user = await vm.login();
+                if (user != null) {
+                  // Update the profile user
+                  final profileVM = Provider.of<ProfileViewModel>(context, listen: false);
+                  profileVM.updateUser(user);
+
                   Navigator.pushNamed(context, '/dashboard');
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
