@@ -16,6 +16,7 @@ import 'ui/notification/view_model/notification_viewModel.dart';
 import 'ui/search/view_model/search_viewModel.dart';
 import 'ui/ticket/view_model/ticket_viewModel.dart';
 import 'ui/purchase/view_model/purchase_viewModel.dart';
+import 'package:festquest/data/model/user/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel(UserModel(uid: '', username: '', password: '', name: '', email: '',phone: '', profilePic: '',),),),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
         ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),

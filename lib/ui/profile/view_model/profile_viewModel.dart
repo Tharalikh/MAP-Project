@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:festquest/data/model/user/user_model.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  String name = 'Atharalikh';
-  String phone = '+60 01010101111';
+  UserModel user;
+
+  ProfileViewModel(this.user);
+
+  String get name => user.name.isNotEmpty ? user.name : 'No Name';
+  String get phone => user.phone.isNotEmpty ? user.phone : 'No Phone';
 
   void logout(BuildContext context) {
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
-  // You could add loading from user service, etc., later
+  void updateUser(UserModel newUser) {
+    user = newUser;
+    notifyListeners();
+  }
 }
