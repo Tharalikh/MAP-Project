@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../data/model/Event/event_model.dart';
 
 class MyEventsViewModel extends ChangeNotifier {
-  final List<Event> _myEvents = [];
+  final List<EventModel> _myEvents = [];
 
-  List<Event> get myEvents => _myEvents;
+  List<EventModel> get myEvents => _myEvents;
 
-  void addEvent(Event event) {
+  void addEvent(EventModel event) {
     _myEvents.add(event);
     notifyListeners();
   }

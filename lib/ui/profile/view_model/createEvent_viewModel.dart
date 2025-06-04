@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
-import '../../../data/model/event/event_model.dart';
+import '../../../data/model/Event/event_model.dart';
 import '../../../data/services/event_service.dart';
 
-class EventViewModel extends ChangeNotifier {
+class CreateEventViewModel extends ChangeNotifier {
   final EventService _eventService = EventService();
 
   String title = '';
   String description = '';
-  DateTime? date;
+  String date = '';
+  String time = '';
+  String price = '';
   String location = '';
+  String poster = '';
+  String category = '';
 
-  void update({
-    String? title,
-    String? description,
-    DateTime? date,
-    String? location,
-  }) {
-    if (title != null) this.title = title;
-    if (description != null) this.description = description;
-    if (date != null) this.date = date;
-    if (location != null) this.location = location;
-    notifyListeners();
-  }
+  void setTitle(String value) => title = value;
+  void setDescription(String value) => description = value;
+  void setDate(String value) => date = value;
+  void setTime(String value) => time = value;
+  void setPrice(String value) => price = value;
+  void setLocation(String value) => location = value;
+  void setPoster(String value) => poster = value;
+  void setCategory(String value) => category = value;
 
-  bool isValid() {
-    return title.isNotEmpty &&
-        description.isNotEmpty &&
-        date != null &&
-        location.isNotEmpty;
-  }
-
-  Future<String?> createEvent() async {
+  Future<bool> saveEvent() async {
     try {
-      final id = randomAlphaNumeric(10);
-      final event = EventModel(
+      String id = randomAlphaNumeric(10);
+      EventModel event = EventModel(
         id: id,
         title: title,
         description: description,
-        date: date!,
+        date: date,
+        time: time,
+        price: price,
+        poster: poster,
         location: location,
+        category: category,
       );
-      await _eventService.addEvent(event);
-      return null; // success
+      await _eventService.createEvent(event);
+      return true;
     } catch (e) {
-      return "Error: $e";
+      print('Error saving event: $e');
+      return false;
     }
   }
 }

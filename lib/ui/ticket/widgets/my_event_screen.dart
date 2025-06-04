@@ -24,15 +24,15 @@ class MyEventsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (event.posterPath != null)
+                if (event.poster != null)
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                    child: Image.file(
-                      event.posterPath!,
+                    /*child: Image.file(
+                      event.poster!,
                       height: 160,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                    ),
+                    ),*/
                   ),
                 Padding(
                   padding: const EdgeInsets.all(12),
@@ -43,7 +43,7 @@ class MyEventsScreen extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text("📍 ${event.location}"),
                       Text("📅 ${event.date}"),
-                      Text("🎫 RM ${event.price.toStringAsFixed(2)}"),
+                      //Text("🎫 RM ${event.price.toStringAsFixed(2)}"),
                     ],
                   ),
                 ),
