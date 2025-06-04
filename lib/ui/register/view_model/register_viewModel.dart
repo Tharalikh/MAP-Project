@@ -1,46 +1,73 @@
 import 'package:flutter/material.dart';
-import '../../../data/services/service.dart';
+import '../../../data/services/shared_preference.dart';
+import '../../../data/services/user_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterViewModel extends ChangeNotifier {
-  String _username = '';
-  String _profileName = '';
-  String _email = '';
-  String _phoneNum = '';
-  String _password = '';
-  String _confirmPassword = '';
+  String username = '';
+  String profileName = '';
+  String email = '';
+  String phoneNum = '';
+  String password = '';
+  String confirmPassword = '';
 
-  void setUsername(String value) {
-    _username = value;
+  final SharedPreferenceHelper _prefs = SharedPreferenceHelper();
+  final UserService _userService = UserService();
+
+  void updateField({
+    String? username,
+    String? profileName,
+    String? email,
+    String? phoneNum,
+    String? password,
+    String? confirmPassword,
+  }) {
+    if (username != null) this.username = username;
+    if (profileName != null) this.profileName = profileName;
+    if (email != null) this.email = email;
+    if (phoneNum != null) this.phoneNum = phoneNum;
+    if (password != null) this.password = password;
+    if (confirmPassword != null) this.confirmPassword = confirmPassword;
     notifyListeners();
   }
 
-  void setProfileName(String value) {
-    _profileName = value;
-    notifyListeners();
+  bool validateForm() {
+    return username.isNotEmpty &&
+        profileName.isNotEmpty &&
+        email.isNotEmpty &&
+        phoneNum.isNotEmpty &&
+        password.isNotEmpty &&
+        confirmPassword.isNotEmpty &&
+        password == confirmPassword;
   }
 
-  void setEmail(String value) {
-    _email = value;
-    notifyListeners();
-  }
+  Future<String?> register() async {
+    try {
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-  void setPhoneNum(String value) {
-    _phoneNum = value;
-    notifyListeners();
-  }
+      final uid = userCredential.user!.uid;
 
-  void setPassword(String value) {
-    _password = value;
-    notifyListeners();
-  }
+      final userMap = {
+        "username": username,
+        "profileName": profileName,
+        "email": email,
+        "phoneNum": phoneNum,
+        "id": uid,
+      };
 
-  void setConfirmPassword(String value) {
-    _confirmPassword = value;
-    notifyListeners();
-  }
+      await _prefs.saveUsername(username);
+      await _prefs.saveName(profileName);
+      await _prefs.saveEmail(email);
+      await _prefs.savePhone(phoneNum);
+      await _prefs.saveUserId(uid);
+      await _userService.addUserInfo(userMap, uid);
 
-  Future<bool> register() async {
-    if (_password != _confirmPassword) return false;
-    return await AuthService.mockRegister(_username, _profileName, _email, _phoneNum, _password);
+      return null; // success
+    } on FirebaseAuthException catch (e) {
+      return e.code;
+    } catch (e) {
+      return "unexpected_error";
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,22 @@ class CreateEventScreen extends StatefulWidget {
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
+  String title = '', date = '', location = '', price = '';
+  TextEditingController titleController = new TextEditingController();
+  TextEditingController dateController = new TextEditingController();
+  TextEditingController locationController = new TextEditingController();
+  TextEditingController priceController = new TextEditingController();
+
+  event() async {
+    if (titleController.text.isEmpty &&
+        dateController.text.isEmpty &&
+        locationController.text.isEmpty &&
+        priceController.text.isEmpty)
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+  }
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _dateController = TextEditingController();
