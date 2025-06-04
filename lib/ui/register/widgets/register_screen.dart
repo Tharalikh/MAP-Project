@@ -22,7 +22,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Profile Name'),
-              onChanged: (val) => vm.updateField(profileName: val),
+              onChanged: (val) => vm.updateField(name: val),
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Email'),

@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   String username = '';
-  String profileName = '';
+  String name = '';
   String email = '';
   String phoneNum = '';
   String password = '';
@@ -16,14 +16,14 @@ class RegisterViewModel extends ChangeNotifier {
 
   void updateField({
     String? username,
-    String? profileName,
+    String? name,
     String? email,
     String? phoneNum,
     String? password,
     String? confirmPassword,
   }) {
     if (username != null) this.username = username;
-    if (profileName != null) this.profileName = profileName;
+    if (name != null) this.name = name;
     if (email != null) this.email = email;
     if (phoneNum != null) this.phoneNum = phoneNum;
     if (password != null) this.password = password;
@@ -33,7 +33,7 @@ class RegisterViewModel extends ChangeNotifier {
 
   bool validateForm() {
     return username.isNotEmpty &&
-        profileName.isNotEmpty &&
+        name.isNotEmpty &&
         email.isNotEmpty &&
         phoneNum.isNotEmpty &&
         password.isNotEmpty &&
@@ -50,14 +50,14 @@ class RegisterViewModel extends ChangeNotifier {
 
       final userMap = {
         "username": username,
-        "profileName": profileName,
+        "name": name,
         "email": email,
         "phoneNum": phoneNum,
         "id": uid,
       };
 
       await _prefs.saveUsername(username);
-      await _prefs.saveName(profileName);
+      await _prefs.saveName(name);
       await _prefs.saveEmail(email);
       await _prefs.savePhone(phoneNum);
       await _prefs.saveUserId(uid);
