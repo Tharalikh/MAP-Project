@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_model/register_viewModel.dart';
-import '../login/login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -11,60 +10,56 @@ class RegisterScreen extends StatelessWidget {
     final vm = Provider.of<RegisterViewModel>(context);
 
     return Scaffold(
-      body: Padding(
+      appBar: AppBar(title: const Text("Register")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            const Align(alignment: Alignment.topLeft, child: BackButton()),
             TextField(
+              controller: vm.usernameController,
               decoration: const InputDecoration(labelText: 'Username'),
-              onChanged: (val) => vm.updateField(username: val),
             ),
             TextField(
+              controller: vm.profileNameController,
               decoration: const InputDecoration(labelText: 'Profile Name'),
-              onChanged: (val) => vm.updateField(name: val),
             ),
             TextField(
+              controller: vm.emailController,
               decoration: const InputDecoration(labelText: 'Email'),
-              onChanged: (val) => vm.updateField(email: val),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
+              controller: vm.phoneController,
               decoration: const InputDecoration(labelText: 'Phone Number'),
-              onChanged: (val) => vm.updateField(phoneNum: val),
+              keyboardType: TextInputType.phone,
             ),
             TextField(
+              controller: vm.passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
-              onChanged: (val) => vm.updateField(password: val),
             ),
             TextField(
+              controller: vm.confirmPasswordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Confirm Password'),
-              onChanged: (val) => vm.updateField(confirmPassword: val),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {
-                if (!vm.validateForm()) {
+                final success = await vm.registerUser();
+                if (success && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid input or password mismatch')),
+                    const SnackBar(content: Text("Registration successful")),
                   );
-                  return;
-                }
-
-                final error = await vm.register();
-                if (error == null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  );
+                  Navigator.pushReplacementNamed(context, '/');
                 } else {
+                  final error = vm.errorMessage ?? "Something went wrong";
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Registration failed: $error')),
+                    SnackBar(content: Text("Registration failed: $error")),
                   );
                 }
               },
-              child: const Text('Register'),
+              child: const Text("Register"),
             ),
           ],
         ),

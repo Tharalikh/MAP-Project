@@ -1,20 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:festquest/model/user_model.dart';
+import '../model/user_model.dart';
+import '../services/shared_preference.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  UserModel user;
+  UserModel? user;
 
-  ProfileViewModel(this.user);
+  Future<void> loadUserData() async {
+    print("🔍 Starting to load user data...");
+    try {
+      final id = await SharedPreferenceHelper().getUserId();
+      final username = await SharedPreferenceHelper().getUsername();
+      final name = await SharedPreferenceHelper().getName();
+      final email = await SharedPreferenceHelper().getEmail();
+      final phone = await SharedPreferenceHelper().getPhone();
 
-  String get name => user.name.isNotEmpty ? user.name : 'No Name';
-  String get phone => user.phone.isNotEmpty ? user.phone : 'No Phone';
+      print("✅ Loaded from SharedPrefs:");
+      print("id: $id, username: $username, name: $name, email: $email, phone: $phone");
 
-  void logout(BuildContext context) {
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-  }
+      if (id == null || username == null || name == null) {
+        print("❌ Missing essential user fields, setting user = null");
+        user = null;
+      } else {
+        user = UserModel(
+          uid: id,
+          username: username,
+          name: name,
+          email: email ?? '',
+          phone: phone ?? '',
+          password: '',
+          profilePic: '',
+        );
+        print("UserModel created: name=${user!.name}, phone=${user!.phone}");
+      }
 
-  void updateUser(UserModel newUser) {
-    user = newUser;
-    notifyListeners();
+      notifyListeners();
+      print("🎉 notifyListeners() called.");
+    } catch (e) {
+      print("🔥 Error in loadUserData: $e");
+      user = null;
+      notifyListeners();
+    }
   }
 }

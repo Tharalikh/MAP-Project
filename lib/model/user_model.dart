@@ -17,9 +17,9 @@ class UserModel {
     required this.profilePic,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> map, String uid) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: uid,
+      uid: map['uid'] ?? '',
       username: map['username'] ?? '',
       password: map['password'] ?? '',
       name: map['name'] ?? '',
@@ -30,6 +30,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() => {
+    'uid' : uid,
     'username': username,
     'password': password,
     'name': name,

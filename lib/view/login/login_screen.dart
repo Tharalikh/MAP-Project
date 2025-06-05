@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_model/login_viewModel.dart';
-import '../../view_model/profile_viewModel.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -20,31 +19,26 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 40),
             TextField(
               decoration: const InputDecoration(labelText: 'Email'),
-              onChanged: vm.setUsername,
+              controller: vm.emailController,
             ),
             TextField(
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
-              onChanged: vm.setPassword,
+              controller: vm.passwordController,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final user = await vm.login();
-                if (user != null) {
-                  // Update the profile user
-                  final profileVM = Provider.of<ProfileViewModel>(context, listen: false);
-                  profileVM.updateUser(user);
-
-                  Navigator.pushNamed(context, '/dashboard');
+                final success = await vm.loginUser();
+                if (success && context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/dashboard');
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid credentials')),
+                    SnackBar(content: Text(vm.errorMessage ?? 'Login failed')),
                   );
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-              child: const Text('Login'),
+              child: const Text("Login"),
             ),
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/register'),

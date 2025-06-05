@@ -31,7 +31,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
         ChangeNotifierProvider(create: (_) => CreateEventViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel(UserModel(uid: '', username: '', password: '', name: '', email: '',phone: '', profilePic: '',),),),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
         ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),

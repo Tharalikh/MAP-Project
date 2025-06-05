@@ -2,15 +2,35 @@ import 'package:festquest/view/login/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../view_model/profile_viewModel.dart';
-import 'package:festquest/model/user_model.dart';
+import 'package:festquest/view_model/profile_viewModel.dart';
+import 'package:festquest/services/shared_preference.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    final vm = Provider.of<ProfileViewModel>(context, listen: false);
+    await vm.loadUserData();
+    setState(() => isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<ProfileViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
@@ -37,8 +57,8 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           const CircleAvatar(radius: 40),
-          Center(child: Text(vm.name)),
-          Center(child: Text(vm.phone)),
+          Center(child: Text(vm.user!.name)),
+          Center(child: Text(vm.user!.phone)),
           ListTile(
             leading: Icon(Icons.confirmation_num),
             title: Text('My Ticket'),
@@ -68,16 +88,18 @@ class ProfileScreen extends StatelessWidget {
             },
             child: const Text("Have an event?"),
           ),
-        ElevatedButton(
+          ElevatedButton(
             child: const Text('Sign Out'),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+              await SharedPreferenceHelper().clearPrefs(); // 🔑 Clear saved user data
+
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginScreen()),
-                (route) => false,
+                    (route) => false,
               );
             },
-          ),
+          )
         ],
       ),
     );

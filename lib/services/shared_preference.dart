@@ -43,4 +43,45 @@ class SharedPreferenceHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(profilePicKey, getProfilePic);
   }
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userIdKey);
+  }
+
+  Future<String?> getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(usernameKey);
+  }
+
+  Future<String?> getPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(passwordKey);
+  }
+
+  Future<String?> getName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(nameKey);
+  }
+
+  Future<String?> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(emailKey);
+  }
+
+  Future<String?> getPhone() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(phoneKey);
+  }
+
+  Future<String?> getProfilePic() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(profilePicKey);
+  }
+
+  // Clear all user data (for logout)
+  Future<void> clearPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
 }

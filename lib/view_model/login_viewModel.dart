@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
-import '../services/service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/user_service.dart';
+import '../services/shared_preference.dart';
 import '../model/user_model.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  String _username = '';
-  String _password = '';
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  String? errorMessage;
 
-  void setUsername(String value) {
-    _username = value;
-    notifyListeners();
-  }
+  Future<bool> loginUser() async {
+    try {
+      final userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
 
-  void setPassword(String value) {
-    _password = value;
-    notifyListeners();
-  }
+      final uid = userCredential.user!.uid;
 
-  Future<UserModel?> login() async {
-    return await AuthService.login(_username, _password);
+      // Fetch user data from Firestore
+      final userModel = await UserService().getUserById(uid); // should return a UserModel
+
+      if (userModel != null) {
+        await SharedPreferenceHelper().saveUserId(userModel.uid);
+        await SharedPreferenceHelper().saveUsername(userModel.username);
+        await SharedPreferenceHelper().saveName(userModel.name);
+        await SharedPreferenceHelper().saveEmail(userModel.email);
+        await SharedPreferenceHelper().savePhone(userModel.phone);
+      } else {
+        print('❌ userModel is null. Cannot save to SharedPreferences.');
+      }
+
+      return true;
+    } catch (e) {
+      errorMessage = e.toString();
+      return false;
+    }
   }
 }
