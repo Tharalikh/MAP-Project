@@ -24,6 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> loadData() async {
     final vm = Provider.of<ProfileViewModel>(context, listen: false);
     await vm.loadUserData();
+    await vm.deleteAccount();
     setState(() => isLoading = false);
   }
 
@@ -99,7 +100,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     (route) => false,
               );
             },
-          )
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete My Account'),
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Are you sure?"),
+                  content: const Text("This will permanently delete your account."),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+                    TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                await vm.deleteAccount();
+              }
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+              );
+            },
+          ),
         ],
       ),
     );

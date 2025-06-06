@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../model/user_model.dart';
 import '../services/shared_preference.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/user_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   UserModel? user;
 
   Future<void> loadUserData() async {
-    print("🔍 Starting to load user data...");
     try {
       final id = await SharedPreferenceHelper().getUserId();
       final username = await SharedPreferenceHelper().getUsername();
@@ -14,8 +15,6 @@ class ProfileViewModel extends ChangeNotifier {
       final email = await SharedPreferenceHelper().getEmail();
       final phone = await SharedPreferenceHelper().getPhone();
 
-      print("✅ Loaded from SharedPrefs:");
-      print("id: $id, username: $username, name: $name, email: $email, phone: $phone");
 
       if (id == null || username == null || name == null) {
         print("❌ Missing essential user fields, setting user = null");
@@ -41,4 +40,19 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> deleteAccount() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    try {
+      await UserService().deleteUser(user.uid);
+      await FirebaseAuth.instance.currentUser?.delete();
+      await SharedPreferenceHelper().clearPrefs();
+    }catch (e) {
+      return null;
+    }
+  }
+
 }
