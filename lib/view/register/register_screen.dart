@@ -43,6 +43,18 @@ class RegisterScreen extends StatelessWidget {
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Confirm Password'),
             ),
+            DropdownButton(
+              value: vm.selectedRole,
+              items: const [
+                DropdownMenuItem(value: 'user', child: Text('User')),
+                DropdownMenuItem(value: 'organizer', child: Text('Organizer')),
+              ],
+              onChanged: (value) {
+                if (value != null){
+                vm.setRole(value);
+                }
+              },
+            ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
+import '../../services/paymentGateway_service.dart';
 import '../../view_model/purchase_viewModel.dart';
 
 class EventDetailScreen extends StatelessWidget {
@@ -42,8 +44,10 @@ class EventDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/payment_type'),
+              child: MaterialButton(
+                onPressed: () {
+                  StripeService.instance.makePayment();
+                },
                 child: const Text("Purchase"),
               ),
             ),

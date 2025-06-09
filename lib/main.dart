@@ -1,5 +1,7 @@
+import 'package:festquest/services/paymentGateway_service.dart';
 import 'package:festquest/view_model/my_event_viewModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,10 +19,14 @@ import 'view_model/search_viewModel.dart';
 import 'view_model/ticket_viewModel.dart';
 import 'view_model/purchase_viewModel.dart';
 import 'view_model/createEvent_viewModel.dart';
-import 'package:festquest/model/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Future<void> setup() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    Stripe.publishableKey = stripePublishableKey;
+  }
+  await setup();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(

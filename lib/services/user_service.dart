@@ -15,7 +15,7 @@ class UserService {
     if (doc.exists && doc.data() != null) {
       return UserModel.fromMap(doc.data()!);
     } else {
-      return null;
+      throw Exception('User not found');
     }
   }
 
