@@ -17,8 +17,24 @@ class EventService {
     }).toList();
   }
 
+  Future<void> deleteEvent(String eventId) async {
+    await _eventCollection.doc(eventId).delete();
+  }
+
+  Future<void> updateEvent(EventModel event) async {
+    await _eventCollection.doc(event.id).update(event.toMap());
+  }
+
   Future<bool> hasEvents() async {
     final snapshot = await _eventCollection.limit(1).get();
     return snapshot.docs.isNotEmpty;
+  }
+
+  Future<EventModel?> getEventById(String id) async {
+    final doc = await _eventCollection.doc(id).get();
+    if (doc.exists) {
+      return EventModel.fromMap(doc.data() as Map<String, dynamic>);
+    }
+    return null;
   }
 }

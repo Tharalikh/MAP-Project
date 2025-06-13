@@ -24,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> loadData() async {
     final vm = Provider.of<ProfileViewModel>(context, listen: false);
     await vm.loadUserData();
-    await vm.deleteAccount();
     setState(() => isLoading = false);
   }
 
@@ -82,12 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const ListTile(
             leading: Icon(Icons.credit_card),
             title: Text('Payment Method'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/create_event');
-            },
-            child: const Text("Have an event?"),
           ),
           ElevatedButton(
             child: const Text('Sign Out'),
