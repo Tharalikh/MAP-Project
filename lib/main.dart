@@ -45,6 +45,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TicketViewModel()),
         ChangeNotifierProvider(create: (_) => PurchaseViewModel()),
         ChangeNotifierProvider(create: (_) => MyEventsViewModel()),
+        ChangeNotifierProvider(create: (_) => SearchViewModel()),
       ],
       child: const FestQuestApp(),
     ),
