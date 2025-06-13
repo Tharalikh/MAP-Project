@@ -37,15 +37,15 @@ class EventModel {
 
   factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      id: map['id'],
-      title: map['title'],
-      description: map['description'],
-      date: map['date'],
-      time: map['time'],
-      price: map['price'],
-      location: map['location'],
-      poster: map['poster'],
-      category: map['category'],
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      date: map['date'] ?? '',
+      time: map['time'] ?? '',
+      price: map['price'] ?? '',
+      location: map['location'] ?? '',
+      poster: map['poster'] ?? '',
+      category: map['category'] ?? '',
     );
   }
 }

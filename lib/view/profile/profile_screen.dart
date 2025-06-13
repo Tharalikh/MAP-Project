@@ -82,12 +82,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Icon(Icons.credit_card),
             title: Text('Payment Method'),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/create_event');
-            },
-            child: const Text("Have an event?"),
-          ),
           ElevatedButton(
             child: const Text('Sign Out'),
             onPressed: () async {
