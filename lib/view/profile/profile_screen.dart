@@ -24,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> loadData() async {
     final vm = Provider.of<ProfileViewModel>(context, listen: false);
     await vm.loadUserData();
-    await vm.deleteAccount();
     setState(() => isLoading = false);
   }
 
@@ -93,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('Sign Out'),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              await SharedPreferenceHelper().clearPrefs(); // 🔑 Clear saved user data
+              await SharedPreferenceHelper().clearPrefs();
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginScreen()),

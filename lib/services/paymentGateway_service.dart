@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-const String stripePublishableKey = "pk_test_51RXztiQXZtBksNEd2G3Y7K5NQjJ1t5WIJzrAwsSVivQXN5SK2nRbPcks8zffEY7hnNgH2xrtEk3pyekRiK7VWtGU006O7532Uu";
-const String stripeSecretKey = "sk_test_51RXztiQXZtBksNEdgEa1fhTsmNDKZKePbrLIKQ4K6b8I6YwiaE2hRziP1WXVFrxAeoBv63I6bMZIA0JjdJJrUqkK00icBTJNMp";
+const String stripePublishableKey = "pk_test_51RXztXHvyUcnnF5YPbWyJk97n3lGG5WVQtcnRO9s5Fbz4t2XKPENbPo5Uh4KNgRQVCaOJdxP5ablMGo6BaMD1ujC006bF5zUM1";
+const String stripeSecretKey = "sk_test_51RXztXHvyUcnnF5YRaE1mNMVb9PuxjyXSDWIsFzBt4cGstSwIHYAZVNawiX40102pc7FH7qOECqzE7Dmw9kiZ6TX00p5vx63Tj";
 
 class StripeService {
   StripeService._();
