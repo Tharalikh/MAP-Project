@@ -6,7 +6,6 @@ import '../view/register/forgotPass_screen.dart';
 import '../view/profile/profile_screen.dart';
 import '../view/profile/editProfile_screen.dart';
 import '../view/purchase/subscription_screen.dart';
-import '../view/profile/create_event_screen.dart';
 import '../view/notification/notification_screen.dart';
 import '../view/core/themes/main_scaffold.dart';
 import '../view/purchase/event_detail_screen.dart';
@@ -15,6 +14,7 @@ import '../view/purchase/payment_screen.dart';
 import '../view/purchase/ticket_barcode_screen.dart';
 import '../view/ticket/my_event_screen.dart';
 import '../view/login/login_screen.dart';
+import '../view/ticket/create_event_screen.dart';
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});
@@ -37,7 +37,6 @@ class FestQuestApp extends StatelessWidget {
             (context) => const SubscriptionPaymentMethodScreen(),
         '/subscription/payment_form':
             (context) => const SubscriptionPaymentFormScreen(),
-        '/create_event': (context) => const CreateEventScreen(),
         '/notification': (context) => const NotificationScreen(),
         '/ticket': (context) => const MainScaffold(),
         '/search': (context) => const MainScaffold(),
@@ -46,6 +45,7 @@ class FestQuestApp extends StatelessWidget {
         '/payment_confirm': (context) => const ConfirmPaymentScreen(),
         '/barcode': (context) => const TicketSuccessScreen(),
         '/my_event': (context) => const MyEventsScreen(),
+        '/create_event': (context) => const CreateEventScreen(),
       },
     );
   }

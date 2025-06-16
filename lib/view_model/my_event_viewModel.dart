@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../model/event_model.dart';
 import '../services/event_service.dart';
 
@@ -10,18 +11,20 @@ class MyEventsViewModel extends ChangeNotifier {
   List<EventModel> get myEvents => _myEvents;
   bool get isLoading => _isLoading;
 
-  // Fetch user's created events from Firebase
+  // Fetch current user's created events from Firebase
   Future<void> fetchMyEvents() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // For now, we'll get all events. In a real app, you'd filter by user ID
-      final allEvents = await _eventService.getAllEvents();
+      // Get only events created by the current logged-in user
+      final userEvents = await _eventService.getCurrentUserEvents();
       _myEvents.clear();
-      _myEvents.addAll(allEvents);
+      _myEvents.addAll(userEvents);
     } catch (e) {
       print('Error fetching my events: $e');
+      // Handle the case where no user is logged in
+      _myEvents.clear();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -29,8 +32,11 @@ class MyEventsViewModel extends ChangeNotifier {
   }
 
   void addEvent(EventModel event) {
-    // Only add to local list if it's not already there
-    if (!_myEvents.any((e) => e.id == event.id)) {
+    // Only add to local list if it's not already there and belongs to current user
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null &&
+        event.creatorId == currentUser.uid &&
+        !_myEvents.any((e) => e.id == event.id)) {
       _myEvents.add(event);
       notifyListeners();
     }
@@ -78,5 +84,10 @@ class MyEventsViewModel extends ChangeNotifier {
   void clearAllEvents() {
     _myEvents.clear();
     notifyListeners();
+  }
+
+  // Get current user ID
+  String? getCurrentUserId() {
+    return FirebaseAuth.instance.currentUser?.uid;
   }
 }

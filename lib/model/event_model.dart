@@ -8,6 +8,7 @@ class EventModel {
   final String location;
   final String poster;
   final String category;
+  final String creatorId;
 
   EventModel({
     required this.id,
@@ -19,6 +20,7 @@ class EventModel {
     required this.location,
     required this.poster,
     required this.category,
+    required this.creatorId,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,6 +34,7 @@ class EventModel {
       'location': location,
       'poster': poster,
       'category': category,
+      'creatorId': creatorId,
     };
   }
 
@@ -46,6 +49,7 @@ class EventModel {
       location: map['location'] ?? '',
       poster: map['poster'] ?? '',
       category: map['category'] ?? '',
+      creatorId: map['creatorId'] ?? '',
     );
   }
 }
