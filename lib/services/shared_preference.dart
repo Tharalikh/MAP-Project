@@ -9,6 +9,18 @@ class SharedPreferenceHelper {
   static String phoneKey = 'phone';
   static String profilePicKey = 'profilePic';
 
+  static String roleKey = 'role';
+
+  Future<bool> saveRole(String role) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(roleKey, role);
+  }
+
+  Future<String?> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(roleKey);
+  }
+
   Future<bool> saveUserId(String getUserId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(userIdKey, getUserId);

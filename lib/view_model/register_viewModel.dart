@@ -49,44 +49,46 @@ class RegisterViewModel extends ChangeNotifier {
         password: password,
       );
 
-      final userModel = UserModel(
-        uid: userCred.user!.uid,
-        username: usernameController.text.trim(),
-        name: profileNameController.text.trim(),
-        email: email,
-        phone: phoneController.text.trim(),
-        password: '',
-        profilePic: profilePicController.text.trim(),
-      );
+      final uid = userCred.user!.uid;
+      final username = usernameController.text.trim();
+      final name = profileNameController.text.trim();
+      final phone = phoneController.text.trim();
+      final profilePic = profilePicController.text.trim();
 
-
-      await UserService().addUser(userModel);
-
-      await SharedPreferenceHelper().saveUserId(userModel.uid);
-      await SharedPreferenceHelper().saveUsername(userModel.username);
-      await SharedPreferenceHelper().saveName(userModel.name);
-      await SharedPreferenceHelper().saveEmail(userModel.email);
-      await SharedPreferenceHelper().savePhone(userModel.phone);
-
+      // Save to correct collection
       if (selectedRole == 'organizer') {
-        final organizerModel = OrganizerModel(
-          uid: userCred.user!.uid,
-          username: usernameController.text.trim(),
-          name: profileNameController.text.trim(),
+        final organizer = OrganizerModel(
+          uid: uid,
+          username: username,
+          name: name,
           email: email,
-          phone: phoneController.text.trim(),
+          phone: phone,
           password: '',
-          profilePic: profilePicController.text.trim(),
+          profilePic: profilePic,
         );
-
-        await OrganizerService().addOrganizerInfo(organizerModel);
-
-        await SharedPreferenceHelper().saveUserId(organizerModel.uid);
-        await SharedPreferenceHelper().saveUsername(organizerModel.username);
-        await SharedPreferenceHelper().saveName(organizerModel.name);
-        await SharedPreferenceHelper().saveEmail(organizerModel.email);
-        await SharedPreferenceHelper().savePhone(organizerModel.phone);
+        await OrganizerService().addOrganizerInfo(organizer);
+      } else {
+        final user = UserModel(
+          uid: uid,
+          username: username,
+          name: name,
+          email: email,
+          phone: phone,
+          password: '',
+          profilePic: profilePic,
+        );
+        await UserService().addUser(user);
       }
+
+      // Save shared preferences
+      final prefs = SharedPreferenceHelper();
+      await prefs.saveUserId(uid);
+      await prefs.saveUsername(username);
+      await prefs.saveName(name);
+      await prefs.saveEmail(email);
+      await prefs.savePhone(phone);
+      await prefs.saveProfilePic(profilePic);
+      await prefs.saveRole(selectedRole); // <-- important to differentiate role later
 
       return true;
     } on FirebaseAuthException catch (e) {
@@ -95,6 +97,7 @@ class RegisterViewModel extends ChangeNotifier {
       return false;
     }
   }
+
 
   void disposeControllers() {
     usernameController.dispose();
