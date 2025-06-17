@@ -246,8 +246,18 @@ class _MyEventsScreenState extends State<MyEventsScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton.icon(
-                                  onPressed: () {
-                                    // Edit functionality can be added later
+                                  onPressed: () async {
+                                    // Navigate to edit event screen
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      '/edit_event',
+                                      arguments: event,
+                                    );
+
+                                    // If edit was successful, refresh the events list
+                                    if (result == true) {
+                                      vm.fetchMyEvents();
+                                    }
                                   },
                                   icon: const Icon(
                                     Icons.edit_outlined,

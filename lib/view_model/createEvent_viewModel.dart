@@ -144,6 +144,102 @@ class CreateEventViewModel extends ChangeNotifier {
     }
   }
 
+  // NEW: Update event functionality
+  Future<bool> updateEvent(EventModel event) async {
+    try {
+      print("=== UPDATE EVENT DEBUG ===");
+      print("Updating event with ID: '${event.id}'");
+      print("Category: '${event.category}'");
+
+      // Get current user
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print("ERROR: No user logged in");
+        return false;
+      }
+
+      // Verify user owns this event
+      if (event.creatorId != currentUser.uid) {
+        print("ERROR: User does not own this event");
+        return false;
+      }
+
+      // Double-check category before updating
+      if (!validCategories.contains(event.category)) {
+        print("ERROR: Attempting to update with invalid category '${event.category}'");
+        return false;
+      }
+
+      print("Event data being updated: ${event.toMap()}");
+
+      // Update using EventService
+      await _eventService.updateEvent(event);
+
+      print("Event updated successfully");
+
+      return true;
+    } catch (e) {
+      print("Error updating event: $e");
+      return false;
+    }
+  }
+
+  // NEW: Alternative method using direct Firestore for update
+  Future<bool> updateEventDirectly(EventModel event) async {
+    try {
+      print("=== UPDATE EVENT DIRECTLY DEBUG ===");
+      print("Updating event with ID: '${event.id}'");
+
+      // Get current user
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print("ERROR: No user logged in");
+        return false;
+      }
+
+      // Verify user owns this event
+      if (event.creatorId != currentUser.uid) {
+        print("ERROR: User does not own this event");
+        return false;
+      }
+
+      // Double-check category before updating
+      if (!validCategories.contains(event.category)) {
+        print("ERROR: Attempting to update with invalid category '${event.category}'");
+        return false;
+      }
+
+      final eventData = {
+        'id': event.id,
+        'title': event.title,
+        'description': event.description,
+        'category': event.category,
+        'location': event.location,
+        'date': event.date,
+        'time': event.time,
+        'price': event.price,
+        'poster': event.poster,
+        'creatorId': event.creatorId,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      print("Event data being updated: $eventData");
+
+      // Update in Firestore
+      await FirebaseFirestore.instance
+          .collection('events')
+          .doc(event.id)
+          .update(eventData);
+
+      print("Event updated successfully");
+
+      return true;
+    } catch (e) {
+      print("Error updating event: $e");
+      return false;
+    }
+  }
+
   // Alternative method using direct Firestore (if you prefer not to use EventService)
   Future<bool> saveEventDirectly() async {
     try {
