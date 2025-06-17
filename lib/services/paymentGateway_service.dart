@@ -9,46 +9,52 @@ class StripeService {
 
   static final StripeService instance = StripeService._();
 
-  Future<void> makePayment() async {
+  Future<void> makePayment(double amount) async {
     try {
-      String? paymentIntentClientSecret = await _createPaymentIntent(10, "myr");
-      if (paymentIntentClientSecret == null) return;
+      final clientSecret = await _createPaymentIntent(amount, "myr");
+      if (clientSecret == null) return;
+
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: "Athar",
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: "FestQuest",
         ),
       );
+
       await processPayment();
     } catch (e) {
-      print("Error making payment: $e");
+      print("Stripe error: $e");
     }
   }
 
-  Future<String?> _createPaymentIntent(int amount, String currency) async {
+  Future<String?> _createPaymentIntent(double amount, String currency) async {
     try {
       final Dio dio = Dio();
-      Map<String, dynamic> data = {
-        'amount': calculateAmount(amount),
+
+      final data = {
+        'amount': calculateAmount(amount), // must be int (in cents)
         'currency': currency,
       };
-      var response = await dio.post(
+
+      final response = await dio.post(
         "https://api.stripe.com/v1/payment_intents",
         data: data,
         options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-        headers: {
-          "Authorization": "Bearer $stripeSecretKey",
-          "Content-Type": 'application/x-www-form-urlencoded'
-      },
-      ),
-    );
-      if (response.data != null) {
+          contentType: Headers.formUrlEncodedContentType,
+          headers: {
+            "Authorization": "Bearer $stripeSecretKey",
+            "Content-Type": 'application/x-www-form-urlencoded',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["client_secret"] != null) {
         return response.data["client_secret"];
+      } else {
+        print("Stripe response error: ${response.data}");
       }
-      return null;
-    } catch(e) {
-      print(e);
+    } catch (e) {
+      print("Stripe payment intent error: $e");
     }
     return null;
   }
@@ -62,8 +68,7 @@ class StripeService {
     }
   }
 
-  String calculateAmount(int amount) {
-    final calculateAmount = amount * 100;
-    return calculateAmount.toString();
+  int calculateAmount(double amount) {
+    return (amount * 100).round(); // convert MYR to cents
   }
 }

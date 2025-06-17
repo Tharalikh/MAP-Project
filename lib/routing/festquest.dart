@@ -40,12 +40,22 @@ class FestQuestApp extends StatelessWidget {
         '/notification': (context) => const NotificationScreen(),
         '/ticket': (context) => const MainScaffold(),
         '/search': (context) => const MainScaffold(),
-        '/event_detail': (context) => const EventDetailScreen(),
-        '/payment_type': (context) => const PaymentMethodScreen(),
-        '/payment_confirm': (context) => const ConfirmPaymentScreen(),
+        //'/payment_type': (context) => const PaymentMethodScreen(),
+        //'/payment_confirm': (context) => const ConfirmPaymentScreen(),
         '/barcode': (context) => const TicketSuccessScreen(),
         '/my_event': (context) => const MyEventsScreen(),
         '/create_event': (context) => const CreateEventScreen(),
+      },
+      onGenerateRoute: (settings) {
+        // Dynamic route for Event Detail Screen
+        if (settings.name == '/event_detail') {
+          final eventId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => EventDetailScreen(eventId: eventId),
+          );
+        }
+
+        return null; // fallback if route not found
       },
     );
   }

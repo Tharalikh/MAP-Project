@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 class PurchaseViewModel extends ChangeNotifier {
   int quantity = 1;
-  String paymentMethod = '';
-  final double pricePerTicket = 120.0;
+  double _pricePerTicket = 0.0;
+
+  // Getter and setter for pricePerTicket
+  double get pricePerTicket => _pricePerTicket;
+
+  void setPrice(double price) {
+    _pricePerTicket = price;
+    notifyListeners();
+  }
 
   void increment() {
     quantity++;
@@ -17,10 +24,5 @@ class PurchaseViewModel extends ChangeNotifier {
     }
   }
 
-  void setPaymentMethod(String method) {
-    paymentMethod = method;
-    notifyListeners();
-  }
-
-  double get total => quantity * pricePerTicket;
+  double get totalPrice => _pricePerTicket * quantity;
 }

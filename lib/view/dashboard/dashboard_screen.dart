@@ -434,7 +434,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () => Navigator.pushNamed(
                   context,
                   '/event_detail',
-                  arguments: event,
+                  arguments: event.id,
                 ),
                 child: Container(
                   width: 140,
