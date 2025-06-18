@@ -1,12 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:festquest/model/event_model.dart';
 import 'package:festquest/services/event_service.dart';
 import 'package:festquest/services/paymentGateway_service.dart';
-import '../../model/ticket_model.dart';
-import '../../services/ticket_service.dart';
 import '../../view_model/purchase_viewModel.dart';
 import '../../view_model/ticket_viewModel.dart';
 

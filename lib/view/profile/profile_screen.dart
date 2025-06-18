@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    (route) => false,
+                (route) => false,
               );
             },
           ),
@@ -100,23 +100,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("Are you sure?"),
-                  content: const Text("This will permanently delete your account."),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-                    TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
-                  ],
-                ),
+                builder:
+                    (_) => AlertDialog(
+                      title: const Text("Are you sure?"),
+                      content: const Text(
+                        "This will permanently delete your account.",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text("Delete"),
+                        ),
+                      ],
+                    ),
               );
 
               if (confirm == true) {
                 await vm.deleteAccount();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
               }
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    (route) => false,
-              );
             },
           ),
         ],
