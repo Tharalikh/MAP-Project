@@ -1,106 +1,124 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
+import '../model/ticket_model.dart';
 
 class TicketViewModel extends ChangeNotifier {
-  List<Map<String, String>> activeTickets = [
-    {
-      'name': 'Music Fest 2025',
-      'location': 'Dewan Raya, JB',
-      'amount': 'RM120',
-      'date': 'June 25, 2025',
-      'time': '7:00 PM',
-      'ticketId': 'TKT001258963',
-      'category': 'Festival',
-      'description': 'Annual music festival featuring local and international artists',
-    },
-    {
-      'name': 'Football Championship',
-      'location': 'Stadium Larkin',
-      'amount': 'RM55',
-      'date': 'July 15, 2025',
-      'time': '8:00 PM',
-      'ticketId': 'TKT002147852',
-      'category': 'Sports',
-      'description': 'Local football championship final match',
-    },
-  ];
+  int _quantity = 1;
+  late double _pricePerTicket;
+  late String _eventId;
+  late String _eventName;
+  late String _eventLocation;
+  late String _eventDate;
+  late String _eventTime;
+  late String _eventPoster;
 
-  List<Map<String, String>> ticketHistory = [
-    {
-      'name': 'Pop Night Extravaganza',
-      'location': 'Open Air Stadium',
-      'amount': 'RM80',
-      'date': 'April 5, 2025',
-      'time': '8:00 PM',
-      'ticketId': 'TKT001789456',
-      'category': 'Concert',
-      'description': 'Pop music concert featuring top artists',
-      'status': 'completed',
-    },
-    {
-      'name': 'Badminton Tournament',
-      'location': 'Sports Complex JB',
-      'amount': 'RM35',
-      'date': 'March 22, 2025',
-      'time': '2:00 PM',
-      'ticketId': 'TKT001456789',
-      'category': 'Sports',
-      'description': 'Regional badminton championship tournament',
-      'status': 'completed',
-    },
-    {
-      'name': 'Cultural Heritage Festival',
-      'location': 'Heritage Park',
-      'amount': 'RM25',
-      'date': 'February 18, 2025',
-      'time': '10:00 AM',
-      'ticketId': 'TKT001234567',
-      'category': 'Festival',
-      'description': 'Traditional Malaysian cultural festival celebration',
-      'status': 'completed',
-    },
-  ];
+  List<TicketModel> _tickets = [];
+  bool _isLoading = false;
 
-  // Method to add a new ticket (for when user purchases)
-  void addActiveTicket(Map<String, String> ticket) {
-    activeTickets.add(ticket);
+  // Public Getters
+  int get quantity => _quantity;
+  double get totalPrice => _pricePerTicket * _quantity;
+  List<TicketModel> get tickets => _tickets;
+  bool get isLoading => _isLoading;
+
+  // Setters for Event Data
+  void setEventData({
+    required String eventId,
+    required String name,
+    required String location,
+    required String date,
+    required String time,
+    required String price,
+    required String poster,
+  }) {
+    _eventId = eventId;
+    _eventName = name;
+    _eventLocation = location;
+    _eventDate = date;
+    _eventTime = time;
+    _pricePerTicket = double.tryParse(price) ?? 0.0;
+    _eventPoster = poster;
     notifyListeners();
   }
 
-  // Method to move ticket from active to history
-  void completeTicket(String ticketId) {
-    final ticketIndex = activeTickets.indexWhere((ticket) => ticket['ticketId'] == ticketId);
-    if (ticketIndex != -1) {
-      final ticket = activeTickets.removeAt(ticketIndex);
-      ticket['status'] = 'completed';
-      ticketHistory.insert(0, ticket); // Add to the beginning of history
+  void increment() {
+    _quantity++;
+    notifyListeners();
+  }
+
+  void decrement() {
+    if (_quantity > 1) {
+      _quantity--;
       notifyListeners();
     }
   }
 
-  // Method to get ticket by ID
-  Map<String, String>? getTicketById(String ticketId) {
+  // Save ticket to Firestore
+  Future<bool> saveTicket() async {
     try {
-      return activeTickets.firstWhere((ticket) => ticket['ticketId'] == ticketId);
-    } catch (e) {
-      try {
-        return ticketHistory.firstWhere((ticket) => ticket['ticketId'] == ticketId);
-      } catch (e) {
-        return null;
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print("❌ No user logged in");
+        return false;
       }
+
+      final ticketId = 'TKT${const Uuid().v4()}';
+
+      final ticketData = {
+        'id': ticketId,
+        'eventId': _eventId,
+        'userId': currentUser.uid,
+        'name': _eventName,
+        'location': _eventLocation,
+        'date': _eventDate,
+        'time': _eventTime,
+        'price': totalPrice,
+        'quantity': _quantity,
+        'poster': _eventPoster,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      print("📤 Saving ticket: $ticketData");
+
+      await FirebaseFirestore.instance
+          .collection('tickets')
+          .doc(ticketId)
+          .set(ticketData);
+
+      print("✅ Ticket saved successfully");
+      return true;
+    } catch (e) {
+      print("❌ Error saving ticket: $e");
+      return false;
     }
   }
 
-  // Method to check if ticket is active
-  bool isTicketActive(String ticketId) {
-    return activeTickets.any((ticket) => ticket['ticketId'] == ticketId);
+  // Load tickets from Firestore for current user
+  Future<void> loadUserTickets() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('tickets')
+            .where('userId', isEqualTo: userId)
+            .orderBy('createdAt', descending: true)
+            .get();
+
+        _tickets = snapshot.docs.map((doc) {
+          final data = doc.data();
+          return TicketModel.fromMap(data);
+        }).toList();
+      }
+    } catch (e) {
+      print("❌ Failed to load tickets: $e");
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
-
-  // Get total number of tickets
-  int get totalTickets => activeTickets.length + ticketHistory.length;
-
-  // Get active tickets count
-  int get activeTicketsCount => activeTickets.length;
-
-  // Get history tickets count
-  int get historyTicketsCount => ticketHistory.length;
 }

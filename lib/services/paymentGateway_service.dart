@@ -9,10 +9,10 @@ class StripeService {
 
   static final StripeService instance = StripeService._();
 
-  Future<void> makePayment(double amount) async {
+  Future<bool> makePayment(double amount) async {
     try {
       final clientSecret = await _createPaymentIntent(amount, "myr");
-      if (clientSecret == null) return;
+      if (clientSecret == null) return false;
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -21,11 +21,15 @@ class StripeService {
         ),
       );
 
-      await processPayment();
+      await Stripe.instance.presentPaymentSheet();
+      print("✅ Payment successful");
+      return true;
     } catch (e) {
-      print("Stripe error: $e");
+      print("❌ Payment failed: $e");
+      return false;
     }
   }
+
 
   Future<String?> _createPaymentIntent(double amount, String currency) async {
     try {

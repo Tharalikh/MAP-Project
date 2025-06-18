@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:festquest/model/event_model.dart';
 import 'package:festquest/services/event_service.dart';
 import 'package:festquest/services/paymentGateway_service.dart';
+import '../../model/ticket_model.dart';
+import '../../services/ticket_service.dart';
 import '../../view_model/purchase_viewModel.dart';
+import '../../view_model/ticket_viewModel.dart';
 
 class EventDetailScreen extends StatefulWidget {
   final String eventId;
@@ -82,11 +86,38 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 child: MaterialButton(
                   color: Colors.blue,
                   textColor: Colors.white,
-                  onPressed: () {
-                    final total = vm.totalPrice;
-                    StripeService.instance.makePayment(total);
+                  onPressed: () async {
+                    if (event == null) return;
+
+                    // ✅ Local variable that is non-nullable
+                    final e = event!;
+
+                    final ticketVM = context.read<TicketViewModel>();
+
+                    ticketVM.setEventData(
+                      eventId: e.id ?? '',
+                      name: e.title ?? '',
+                      location: e.location ?? '',
+                      date: e.date ?? '',
+                      time: e.time ?? '',
+                      price: e.price ?? '0',
+                      poster: e.poster ?? '',
+                    );
+
+                    final paymentSuccess = await StripeService.instance.makePayment(vm.totalPrice);
+
+                    if (paymentSuccess) {
+                      final saveSuccess = await ticketVM.saveTicket();
+
+                      if (saveSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Purchase successful")),
+                        );
+                        Navigator.pop(context);
+                      }
+                    }
                   },
-                  child: Text("Pay RM ${vm.totalPrice.toStringAsFixed(2)}"),
+                    child: Text("Purchase"),
                 ),
               ),
             ],
