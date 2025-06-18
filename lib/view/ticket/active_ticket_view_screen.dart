@@ -1,15 +1,16 @@
 import 'package:festquest/model/ticket_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
-import '../../view_model/ticket_viewModel.dart';
+import 'dart:ui' as ui;
+import 'dart:io';
+import 'dart:typed_data'; // Added this import for ByteData
 
 class ActiveTicketScreen extends StatelessWidget {
   final TicketModel ticket;
+  final GlobalKey _qrKey = GlobalKey();
 
-  const ActiveTicketScreen({super.key, required this.ticket});
+  ActiveTicketScreen({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class ActiveTicketScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.1),
+                    color: Colors.grey[300]!,
                     spreadRadius: 1,
                     blurRadius: 10,
                     offset: const Offset(0, 2),
@@ -183,9 +184,9 @@ class ActiveTicketScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.grey.withValues(alpha: 0.1),
-                                  Colors.grey.withValues(alpha: 0.5),
-                                  Colors.grey.withValues(alpha: 0.1),
+                                  Colors.grey[200]!,
+                                  Colors.grey[400]!,
+                                  Colors.grey[200]!,
                                 ],
                               ),
                             ),
@@ -210,18 +211,21 @@ class ActiveTicketScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
 
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-                          ),
-                          child: QrImageView(
-                            data: 'TICKET:${ticket.name}-${ticket.id}',
-                            version: QrVersions.auto,
-                            size: 200.0,
-                            backgroundColor: Colors.white,
+                        RepaintBoundary(
+                          key: _qrKey,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: QrImageView(
+                              data: 'TICKET:${ticket.name}-${ticket.id}',
+                              version: QrVersions.auto,
+                              size: 200.0,
+                              backgroundColor: Colors.white,
+                            ),
                           ),
                         ),
 
@@ -245,24 +249,24 @@ class ActiveTicketScreen extends StatelessWidget {
             // Action Buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // Download ticket functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Download ticket functionality coming soon!')),
-                    );
-                  },
-                  icon: const Icon(Icons.download),
-                  label: const Text('Download Ticket'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _downloadQRCode(context),
+                      icon: const Icon(Icons.qr_code),
+                      label: const Text('Download QR Code'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+
+                ],
               ),
             ),
 
@@ -275,7 +279,7 @@ class ActiveTicketScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.orange[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.orange[300]!),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,6 +319,159 @@ class ActiveTicketScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _downloadQRCode(BuildContext context) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Saving QR Code...'),
+            ],
+          ),
+        ),
+      );
+
+      // Capture the QR code as image
+      RenderRepaintBoundary boundary = _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData != null) {
+        List<int> pngBytes = byteData.buffer.asUint8List();
+
+        // Create filename with ticket info (sanitize filename)
+        String sanitizedName = ticket.name
+            .replaceAll(' ', '_')
+            .replaceAll(RegExp(r'[^\w\-_.]'), '');
+        String fileName = 'QR_${sanitizedName}_${ticket.id}_${DateTime.now().millisecondsSinceEpoch}.png';
+
+        // Use a simple path that should work on most devices
+        String? directoryPath;
+        String savedLocation = '';
+
+        if (Platform.isAndroid) {
+          // Try common Android paths
+          directoryPath = '/storage/emulated/0/Download';
+          savedLocation = 'Downloads';
+
+          // Fallback to app directory if Downloads is not accessible
+          final downloadDir = Directory(directoryPath);
+          if (!await downloadDir.exists()) {
+            directoryPath = '/data/data/${const String.fromEnvironment('FLUTTER_APP_PACKAGE_NAME', defaultValue: 'com.example.app')}/files';
+            savedLocation = 'App Files';
+          }
+        } else {
+          // For iOS or other platforms, use a basic directory
+          directoryPath = Directory.systemTemp.path;
+          savedLocation = 'Temporary Files';
+        }
+
+        String filePath = '$directoryPath/$fileName';
+
+        try {
+          // Save the file
+          File file = File(filePath);
+          await file.writeAsBytes(pngBytes);
+
+          // Close loading dialog
+          Navigator.pop(context);
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('QR code saved successfully!'),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Location: $savedLocation',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'File: $fileName',
+                    style: const TextStyle(fontSize: 10, color: Colors.white60),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'OK',
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
+            ),
+          );
+        } catch (fileError) {
+          // If file saving fails, try saving to app's temporary directory
+          String tempPath = Directory.systemTemp.path;
+          String tempFilePath = '$tempPath/$fileName';
+
+          File tempFile = File(tempFilePath);
+          await tempFile.writeAsBytes(pngBytes);
+
+          // Close loading dialog
+          Navigator.pop(context);
+
+          // Show success message with temp location
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('QR code saved to temporary storage!'),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Location: Temporary Files',
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'File: $fileName',
+                    style: const TextStyle(fontSize: 10, color: Colors.white60),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'OK',
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
+            ),
+          );
+        }
+      } else {
+        throw Exception('Failed to capture QR code image');
+      }
+    } catch (e) {
+      // Close loading dialog if open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error saving QR code: ${e.toString()}'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
