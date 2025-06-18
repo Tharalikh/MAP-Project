@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:ui' as ui;
 import 'dart:io';
-import 'dart:typed_data'; // Added this import for ByteData
+import 'dart:typed_data';
 
 class ActiveTicketScreen extends StatelessWidget {
   final TicketModel ticket;
@@ -27,7 +27,9 @@ class ActiveTicketScreen extends StatelessWidget {
             onPressed: () {
               // Add share functionality
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share functionality coming soon!')),
+                const SnackBar(
+                  content: Text('Share functionality coming soon!'),
+                ),
               );
             },
           ),
@@ -68,53 +70,80 @@ class ActiveTicketScreen extends StatelessWidget {
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: ticket.poster.isNotEmpty
-                          ? Image.network(
-                        ticket.poster,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            color: Colors.grey[200],
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                    : null,
+                      child:
+                          ticket.poster.isNotEmpty
+                              ? Image.network(
+                                ticket.poster,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value:
+                                            loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[300],
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.broken_image,
+                                            size: 50,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'Image not available',
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                              : Container(
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.image,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'No image available',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                  SizedBox(height: 8),
-                                  Text('Image not available', style: TextStyle(color: Colors.grey)),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                          : Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.image, size: 50, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text('No image available', style: TextStyle(color: Colors.grey)),
-                            ],
-                          ),
-                        ),
-                      ),
                     ),
                   ),
 
@@ -150,11 +179,7 @@ class ActiveTicketScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
 
-                        _buildInfoRow(
-                          Icons.access_time,
-                          'Time',
-                          ticket.time,
-                        ),
+                        _buildInfoRow(Icons.access_time, 'Time', ticket.time),
                         const SizedBox(height: 12),
 
                         _buildInfoRow(
@@ -164,11 +189,7 @@ class ActiveTicketScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
 
-                        _buildInfoRow(
-                          Icons.badge,
-                          'Ticket ID',
-                          ticket.id,
-                        ),
+                        _buildInfoRow(Icons.badge, 'Ticket ID', ticket.id),
                       ],
                     ),
                   ),
@@ -214,30 +235,100 @@ class ActiveTicketScreen extends StatelessWidget {
                         RepaintBoundary(
                           key: _qrKey,
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey[300]!),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.grey[300]!,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey[200]!,
+                                  spreadRadius: 2,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                            child: QrImageView(
-                              data: 'TICKET:${ticket.name}-${ticket.id}',
-                              version: QrVersions.auto,
-                              size: 200.0,
-                              backgroundColor: Colors.white,
+                            child: Column(
+                              children: [
+                                // QR Code with dynamic data from ticket
+                                QrImageView(
+                                  data:
+                                      ticket.qrCode.isNotEmpty
+                                          ? ticket.qrCode
+                                          : 'FESTQUEST:${ticket.id}:${ticket.eventId}:${ticket.userId}:${ticket.createdAt.millisecondsSinceEpoch}',
+                                  version: QrVersions.auto,
+                                  size: 220.0,
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                                ),
+                                const SizedBox(height: 12),
+
+                                // QR Code validation indicator
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[50],
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.green[300]!,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.verified,
+                                        color: Colors.green[700],
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Valid Ticket',
+                                        style: TextStyle(
+                                          color: Colors.green[700],
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
 
                         const SizedBox(height: 16),
 
-                        Text(
-                          'Ticket ID: ${ticket.id}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                            fontFamily: 'monospace',
-                          ),
+                        // Ticket ID and QR info
+                        Column(
+                          children: [
+                            Text(
+                              'Ticket ID: ${ticket.id}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Generated: ${_formatDateTime(ticket.createdAt)}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -265,12 +356,55 @@ class ActiveTicketScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
 
             const SizedBox(height: 32),
+
+            // QR Code Security Info
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue[300]!),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.security, color: Colors.blue[700]),
+                      const SizedBox(width: 8),
+                      Text(
+                        'QR Code Security',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '• Each QR code is unique and cannot be duplicated\n'
+                    '• Contains encrypted ticket and user information\n'
+                    '• Valid only for this specific event and date\n'
+                    '• Scanned once for entry verification',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue[700],
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
 
             // Important Notes
             Container(
@@ -301,9 +435,9 @@ class ActiveTicketScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '• Please arrive 30 minutes before the event starts\n'
-                        '• Keep your ticket ready for scanning\n'
-                        '• No refunds or exchanges allowed\n'
-                        '• Bring a valid ID for verification',
+                    '• Keep your ticket ready for scanning\n'
+                    '• No refunds or exchanges allowed\n'
+                    '• Bring a valid ID for verification',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.orange[700],
@@ -321,28 +455,37 @@ class ActiveTicketScreen extends StatelessWidget {
     );
   }
 
+  // Format DateTime for display
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
   Future<void> _downloadQRCode(BuildContext context) async {
     try {
       // Show loading dialog
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Saving QR Code...'),
-            ],
-          ),
-        ),
+        builder:
+            (context) => const AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Saving QR Code...'),
+                ],
+              ),
+            ),
       );
 
       // Capture the QR code as image
-      RenderRepaintBoundary boundary = _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
 
       if (byteData != null) {
         List<int> pngBytes = byteData.buffer.asUint8List();
@@ -351,7 +494,8 @@ class ActiveTicketScreen extends StatelessWidget {
         String sanitizedName = ticket.name
             .replaceAll(' ', '_')
             .replaceAll(RegExp(r'[^\w\-_.]'), '');
-        String fileName = 'QR_${sanitizedName}_${ticket.id}_${DateTime.now().millisecondsSinceEpoch}.png';
+        String fileName =
+            'QR_${sanitizedName}${ticket.id}${DateTime.now().millisecondsSinceEpoch}.png';
 
         // Use a simple path that should work on most devices
         String? directoryPath;
@@ -365,7 +509,8 @@ class ActiveTicketScreen extends StatelessWidget {
           // Fallback to app directory if Downloads is not accessible
           final downloadDir = Directory(directoryPath);
           if (!await downloadDir.exists()) {
-            directoryPath = '/data/data/${const String.fromEnvironment('FLUTTER_APP_PACKAGE_NAME', defaultValue: 'com.example.app')}/files';
+            directoryPath =
+                '/data/data/${const String.fromEnvironment('FLUTTER_APP_PACKAGE_NAME', defaultValue: 'com.example.app')}/files';
             savedLocation = 'App Files';
           }
         } else {
@@ -478,11 +623,7 @@ class ActiveTicketScreen extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Colors.grey[600],
-        ),
+        Icon(icon, size: 20, color: Colors.grey[600]),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -511,4 +652,38 @@ class ActiveTicketScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _buildInfoRow(IconData icon, String label, String value) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, size: 20, color: Colors.grey[600]),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }

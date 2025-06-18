@@ -55,7 +55,7 @@ class TicketViewModel extends ChangeNotifier {
     }
   }
 
-  // Save ticket to Firestore
+  // Save ticket to Firestore with QR code generation
   Future<bool> saveTicket() async {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -65,6 +65,13 @@ class TicketViewModel extends ChangeNotifier {
       }
 
       final ticketId = 'TKT${const Uuid().v4()}';
+
+      // Generate unique QR code
+      final qrCode = TicketModel.generateQRCode(
+        ticketId,
+        _eventId,
+        currentUser.uid,
+      );
 
       final ticketData = {
         'id': ticketId,
@@ -77,17 +84,18 @@ class TicketViewModel extends ChangeNotifier {
         'price': totalPrice,
         'quantity': _quantity,
         'poster': _eventPoster,
+        'qrCode': qrCode, // Added QR code to saved data
         'createdAt': FieldValue.serverTimestamp(),
       };
 
-      print("📤 Saving ticket: $ticketData");
+      print("📤 Saving ticket with QR code: $ticketData");
 
       await FirebaseFirestore.instance
           .collection('tickets')
           .doc(ticketId)
           .set(ticketData);
 
-      print("✅ Ticket saved successfully");
+      print("✅ Ticket saved successfully with QR code: $qrCode");
       return true;
     } catch (e) {
       print("❌ Error saving ticket: $e");
@@ -103,16 +111,18 @@ class TicketViewModel extends ChangeNotifier {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
-        final snapshot = await FirebaseFirestore.instance
-            .collection('tickets')
-            .where('userId', isEqualTo: userId)
-            .orderBy('createdAt', descending: true)
-            .get();
+        final snapshot =
+            await FirebaseFirestore.instance
+                .collection('tickets')
+                .where('userId', isEqualTo: userId)
+                .orderBy('createdAt', descending: true)
+                .get();
 
-        _tickets = snapshot.docs.map((doc) {
-          final data = doc.data();
-          return TicketModel.fromMap(data);
-        }).toList();
+        _tickets =
+            snapshot.docs.map((doc) {
+              final data = doc.data();
+              return TicketModel.fromMap(data);
+            }).toList();
       }
     } catch (e) {
       print("❌ Failed to load tickets: $e");
@@ -121,26 +131,4 @@ class TicketViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-
-  List<TicketModel> get activeTickets {
-    final now = DateTime.now();
-    return _tickets.where((ticket) {
-      // Combine date and time
-      String dateTimeStr = "${ticket.date} ${ticket.time}";
-      DateTime eventDateTime = DateTime.parse(dateTimeStr);
-      // Show if event time is now or later
-      return !eventDateTime.isBefore(now);
-    }).toList();
-  }
-
-  List<TicketModel> get historyTickets {
-    final now = DateTime.now();
-    return _tickets.where((ticket) {
-      String dateTimeStr = "${ticket.date} ${ticket.time}";
-      DateTime eventDateTime = DateTime.parse(dateTimeStr);
-      // Show if event time is before now
-      return eventDateTime.isBefore(now);
-    }).toList();
-  }
-
 }

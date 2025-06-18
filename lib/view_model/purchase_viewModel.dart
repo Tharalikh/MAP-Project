@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../model/event_model.dart';
 import '../model/ticket_model.dart';
@@ -36,10 +37,21 @@ class PurchaseViewModel extends ChangeNotifier {
     required String userId,
   }) async {
     try {
+      // Process payment first
       await StripeService.instance.makePayment(totalPrice);
 
+      // Generate unique ticket ID
+      final ticketId = 'TKT${const Uuid().v4()}';
+
+      // Generate unique QR code for the ticket
+      final qrCode = TicketModel.generateQRCode(
+        ticketId,
+        event.id ?? '',
+        userId,
+      );
+
       final ticket = TicketModel(
-        id: 'TKT${DateTime.now().millisecondsSinceEpoch}',
+        id: ticketId,
         eventId: event.id ?? '',
         userId: userId,
         name: event.title ?? '',
@@ -49,16 +61,18 @@ class PurchaseViewModel extends ChangeNotifier {
         price: double.tryParse(event.price ?? '0') ?? 0.0,
         quantity: quantity,
         poster: event.poster ?? '',
+        qrCode: qrCode, // Added QR code to ticket
         createdAt: DateTime.now(),
       );
 
+      // Save ticket with QR code to Firestore
       await TicketService().createTicket(ticket);
-      print("✅ Ticket successfully saved to Firestore");
+
+      print("✅ Ticket successfully saved to Firestore with QR code: $qrCode");
       return true;
     } catch (e) {
       debugPrint("❌ Error processing purchase: $e");
       return false;
     }
   }
-
 }

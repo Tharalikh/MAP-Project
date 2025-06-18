@@ -10,8 +10,9 @@ class TicketModel {
   final String time;
   final double price;
   final int quantity;
-  final DateTime createdAt;
   final String poster;
+  final DateTime createdAt;
+  final String qrCode;
 
   TicketModel({
     required this.id,
@@ -23,10 +24,12 @@ class TicketModel {
     required this.time,
     required this.price,
     required this.quantity,
-    required this.createdAt,
     required this.poster,
+    required this.createdAt,
+    required this.qrCode,
   });
 
+  // Convert to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -39,10 +42,12 @@ class TicketModel {
       'price': price,
       'quantity': quantity,
       'poster': poster,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'qrCode': qrCode,
     };
   }
 
+  // Create from Map (Firestore data)
   factory TicketModel.fromMap(Map<String, dynamic> map) {
     return TicketModel(
       id: map['id'] ?? '',
@@ -52,11 +57,20 @@ class TicketModel {
       location: map['location'] ?? '',
       date: map['date'] ?? '',
       time: map['time'] ?? '',
-      price: (map['price'] as num).toDouble(),
+      price: (map['price'] ?? 0.0).toDouble(),
       quantity: map['quantity'] ?? 1,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
       poster: map['poster'] ?? '',
+      createdAt:
+          map['createdAt'] != null
+              ? (map['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      qrCode: map['qrCode'] ?? '',
     );
   }
 
+  // Generate unique QR code data
+  static String generateQRCode(String ticketId, String eventId, String userId) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    return 'FESTQUEST:$ticketId:$eventId:$userId:$timestamp';
+  }
 }
