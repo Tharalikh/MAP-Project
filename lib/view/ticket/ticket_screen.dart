@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'active_ticket_view_screen.dart';
+import 'history_ticket_view_screen.dart';
 import '../../view_model/ticket_viewModel.dart';
 import '../../model/ticket_model.dart';
 
@@ -22,7 +23,6 @@ class _TicketScreenState extends State<TicketScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TicketViewModel>(context, listen: false).loadUserTickets();
     });
-
   }
 
   @override
@@ -49,26 +49,42 @@ class _TicketScreenState extends State<TicketScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildActiveTickets(vm),
-          const Center(child: Text("No history tickets yet.")),
+          _buildTickets(
+            context,
+            vm.activeTickets,
+            "No active tickets found.",
+            isActiveTab: true,
+          ),
+          _buildTickets(
+            context,
+            vm.historyTickets,
+            "No history tickets yet.",
+            isActiveTab: false,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActiveTickets(TicketViewModel vm) {
+  Widget _buildTickets(
+      BuildContext context,
+      List<TicketModel> tickets,
+      String emptyText, {
+        required bool isActiveTab,
+      }) {
+    final vm = Provider.of<TicketViewModel>(context);
+
     if (vm.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-
-    if (vm.tickets.isEmpty) {
-      return const Center(child: Text("No active tickets found."));
+    if (tickets.isEmpty) {
+      return Center(child: Text(emptyText));
     }
 
     return ListView.builder(
-      itemCount: vm.tickets.length,
+      itemCount: tickets.length,
       itemBuilder: (context, index) {
-        final ticket = vm.tickets[index];
+        final ticket = tickets[index];
 
         return Card(
           elevation: 3,
@@ -78,20 +94,28 @@ class _TicketScreenState extends State<TicketScreen>
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                // ✅ Poster image
+                // Poster image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
+                  child: ticket.poster.isNotEmpty
+                      ? Image.network(
                     ticket.poster,
                     height: 80,
                     width: 80,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 60),
+                    errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image, size: 60),
+                  )
+                      : Container(
+                    color: Colors.grey[300],
+                    height: 80,
+                    width: 80,
+                    child: const Icon(Icons.image, size: 40, color: Colors.grey),
                   ),
                 ),
                 const SizedBox(width: 12),
 
-                // ✅ Ticket details
+                // Ticket details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,20 +131,22 @@ class _TicketScreenState extends State<TicketScreen>
                       ),
                       const SizedBox(height: 2),
                       Text('RM${ticket.price.toStringAsFixed(0)}', style: const TextStyle(color: Colors.green)),
-                      Text(ticket.date),
+                      Text('${ticket.date} ${ticket.time}'),
                     ],
                   ),
                 ),
 
                 const SizedBox(width: 8),
 
-                // ✅ View button
+                // View button
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ActiveTicketScreen(ticket: ticket),
+                        builder: (_) => isActiveTab
+                            ? ActiveTicketScreen(ticket: ticket)
+                            : HistoryTicketScreen(ticket: ticket),
                       ),
                     );
                   },
@@ -137,5 +163,4 @@ class _TicketScreenState extends State<TicketScreen>
       },
     );
   }
-
 }

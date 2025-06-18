@@ -121,4 +121,26 @@ class TicketViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  List<TicketModel> get activeTickets {
+    final now = DateTime.now();
+    return _tickets.where((ticket) {
+      // Combine date and time
+      String dateTimeStr = "${ticket.date} ${ticket.time}";
+      DateTime eventDateTime = DateTime.parse(dateTimeStr);
+      // Show if event time is now or later
+      return !eventDateTime.isBefore(now);
+    }).toList();
+  }
+
+  List<TicketModel> get historyTickets {
+    final now = DateTime.now();
+    return _tickets.where((ticket) {
+      String dateTimeStr = "${ticket.date} ${ticket.time}";
+      DateTime eventDateTime = DateTime.parse(dateTimeStr);
+      // Show if event time is before now
+      return eventDateTime.isBefore(now);
+    }).toList();
+  }
+
 }
