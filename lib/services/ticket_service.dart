@@ -19,4 +19,17 @@ class TicketService {
         .map((doc) => TicketModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
+  Future<void> updateTicketFeedback({
+    required String ticketId,
+    required int rating,
+    required String feedback,
+  }) async {
+    await FirebaseFirestore.instance.collection('tickets').doc(ticketId).update({
+      'rating': rating,
+      'feedback': feedback,
+      'feedbackSubmittedAt': FieldValue.serverTimestamp(), // optional
+    });
+  }
+
 }

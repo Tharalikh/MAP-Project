@@ -63,6 +63,8 @@ class PurchaseViewModel extends ChangeNotifier {
         poster: event.poster ?? '',
         qrCode: qrCode, // Added QR code to ticket
         createdAt: DateTime.now(),
+        rating: 0,
+        feedback: '',
       );
 
       // Save ticket with QR code to Firestore

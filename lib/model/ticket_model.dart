@@ -13,6 +13,9 @@ class TicketModel {
   final String poster;
   final DateTime createdAt;
   final String qrCode;
+  final int? rating;
+  final String? feedback;
+
 
   TicketModel({
     required this.id,
@@ -27,6 +30,8 @@ class TicketModel {
     required this.poster,
     required this.createdAt,
     required this.qrCode,
+    required this.rating,
+    required this.feedback
   });
 
   // Convert to Map for Firestore
@@ -44,6 +49,8 @@ class TicketModel {
       'poster': poster,
       'createdAt': Timestamp.fromDate(createdAt),
       'qrCode': qrCode,
+      'rating' : rating,
+      'feedback' : feedback,
     };
   }
 
@@ -65,6 +72,8 @@ class TicketModel {
               ? (map['createdAt'] as Timestamp).toDate()
               : DateTime.now(),
       qrCode: map['qrCode'] ?? '',
+      rating: map['rating'] ?? 0,
+      feedback: map['feedback'] ?? '',
     );
   }
 
