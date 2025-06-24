@@ -60,7 +60,7 @@ class TicketViewModel extends ChangeNotifier {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
-        print("❌ No user logged in");
+        print("No user logged in");
         return false;
       }
 
@@ -88,49 +88,43 @@ class TicketViewModel extends ChangeNotifier {
         'createdAt': FieldValue.serverTimestamp(),
       };
 
-      print("📤 Saving ticket with QR code: $ticketData");
+      print("Saving ticket with QR code: $ticketData");
 
       await FirebaseFirestore.instance
           .collection('tickets')
           .doc(ticketId)
           .set(ticketData);
 
-      print("✅ Ticket saved successfully with QR code: $qrCode");
+      print("Ticket saved successfully with QR code: $qrCode");
       return true;
     } catch (e) {
-      print("❌ Error saving ticket: $e");
+      print("Error saving ticket: $e");
       return false;
     }
   }
 
   // Load tickets from Firestore for current user
   Future<void> loadUserTickets() async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId != null) {
-        final snapshot =
-            await FirebaseFirestore.instance
-                .collection('tickets')
-                .where('userId', isEqualTo: userId)
-                .orderBy('createdAt', descending: true)
-                .get();
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) return;
 
-        _tickets =
-            snapshot.docs.map((doc) {
-              final data = doc.data();
-              return TicketModel.fromMap(data);
-            }).toList();
-      }
+      final snapshot = await FirebaseFirestore.instance
+          .collection('tickets')
+          .where('userId', isEqualTo: currentUser.uid)
+          .get();
+
+      _tickets = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return TicketModel.fromMap(data);
+      }).toList();
+
+      notifyListeners();
     } catch (e) {
-      print("❌ Failed to load tickets: $e");
+      debugPrint("❌ Failed to load tickets: $e");
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
+
 
   List<TicketModel> get activeTickets {
     final now = DateTime.now();
