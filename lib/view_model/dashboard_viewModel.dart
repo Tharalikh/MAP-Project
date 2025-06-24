@@ -30,8 +30,13 @@ class DashboardViewModel extends ChangeNotifier {
         _errorMessage = 'No events available.';
       } else {
         _allEvents.clear();
-        _allEvents.addAll(events);
+
+        // Filter out past events before adding to _allEvents
+        final upcomingEvents = _filterUpcomingEvents(events);
+        _allEvents.addAll(upcomingEvents);
         _filteredEvents = List.from(_allEvents);
+
+        print("After filtering past events: ${_allEvents.length} upcoming events");
 
         // Debug print all events
         for (int i = 0; i < _allEvents.length; i++) {
@@ -47,6 +52,32 @@ class DashboardViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Helper method to filter out past events
+  List<EventModel> _filterUpcomingEvents(List<EventModel> events) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day); // Start of today
+
+    return events.where((event) {
+      try {
+        DateTime eventDate = DateTime.parse(event.date);
+        DateTime eventDay = DateTime(eventDate.year, eventDate.month, eventDate.day);
+
+        // Include events that are today or in the future
+        bool isUpcoming = eventDay.isAtSameMomentAs(today) || eventDay.isAfter(today);
+
+        if (!isUpcoming) {
+          print("Filtering out past event: ${event.title} - ${event.date}");
+        }
+
+        return isUpcoming;
+      } catch (e) {
+        print("Error parsing date for event '${event.title}': ${event.date} - $e");
+        // If date parsing fails, include the event to be safe
+        return true;
+      }
+    }).toList();
   }
 
   void filterEvents({String? category, String? location, String? date}) {
@@ -116,5 +147,24 @@ class DashboardViewModel extends ChangeNotifier {
     }
     print("Grouped categories: ${categoryMap.keys.toList()}");
     return categoryMap;
+  }
+
+  // Optional: Method to refresh and check for new upcoming events
+  void refreshUpcomingEvents() {
+    if (_allEvents.isNotEmpty) {
+      final originalCount = _allEvents.length;
+
+      // Re-filter all events to remove any that might have become past events
+      final upcomingEvents = _filterUpcomingEvents(_allEvents);
+
+      _allEvents.clear();
+      _allEvents.addAll(upcomingEvents);
+      _filteredEvents = List.from(_allEvents);
+
+      if (originalCount != _allEvents.length) {
+        print("Removed ${originalCount - _allEvents.length} past events during refresh");
+        notifyListeners();
+      }
+    }
   }
 }
