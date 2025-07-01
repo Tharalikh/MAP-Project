@@ -18,6 +18,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _posterController = TextEditingController();
+  final _capacityController = TextEditingController(); // New capacity controller
 
   String? selectedCategory;
   String? selectedLocation;
@@ -39,6 +40,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     _descriptionController.dispose();
     _priceController.dispose();
     _posterController.dispose();
+    _capacityController.dispose(); // Dispose capacity controller
     super.dispose();
   }
 
@@ -180,6 +182,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     createEventVM.setPrice(_priceController.text.trim());
     createEventVM.setLocation(selectedLocation!);
     createEventVM.setPoster(_posterController.text.trim());
+    createEventVM.setCapacity(int.parse(_capacityController.text.trim())); // Set capacity
 
     // Ensure category is exactly one of the allowed values with proper capitalization
     String validatedCategory = selectedCategory!;
@@ -302,7 +305,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       color: _isValidCategory(selectedCategory) ? Colors.grey : Colors.red.shade300,
                     ),
                     borderRadius: BorderRadius.circular(4),
-                    color: selectedCategory != null ? _getCategoryColor(selectedCategory!).withOpacity(0.1) : null,
+                    color: selectedCategory != null ?
+                    _getCategoryColor(selectedCategory!).withAlpha((255 * 0.1).round()) : null,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -442,25 +446,57 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Price
-              TextFormField(
-                controller: _priceController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Price (RM) *",
-                  hintText: "Enter ticket price",
-                  border: OutlineInputBorder(),
-                  prefixText: "RM ",
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Please enter ticket price";
-                  }
-                  if (double.tryParse(value) == null) {
-                    return "Please enter a valid price";
-                  }
-                  return null;
-                },
+              // Price and Capacity Row
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Price (RM) *",
+                        hintText: "Enter ticket price",
+                        border: OutlineInputBorder(),
+                        prefixText: "RM ",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Please enter ticket price";
+                        }
+                        if (double.tryParse(value) == null) {
+                          return "Please enter a valid price";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _capacityController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Capacity *",
+                        hintText: "Max attendees",
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.people),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Please enter capacity";
+                        }
+                        final capacity = int.tryParse(value);
+                        if (capacity == null || capacity <= 0) {
+                          return "Please enter a valid capacity";
+                        }
+                        if (capacity > 10000) {
+                          return "Capacity cannot exceed 10,000";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
 

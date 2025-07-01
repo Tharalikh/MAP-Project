@@ -20,6 +20,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _posterController = TextEditingController();
+  final _capacityController = TextEditingController();
 
   String? selectedCategory;
   String? selectedLocation;
@@ -47,6 +48,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     _descriptionController.text = widget.event.description;
     _priceController.text = widget.event.price;
     _posterController.text = widget.event.poster;
+    _capacityController.text = widget.event.capacity.toString();
 
     selectedCategory = widget.event.category;
     selectedLocation = widget.event.location;
@@ -85,6 +87,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     _descriptionController.dispose();
     _priceController.dispose();
     _posterController.dispose();
+    _capacityController.dispose();
     super.dispose();
   }
 
@@ -213,6 +216,21 @@ class _EditEventScreenState extends State<EditEventScreen> {
     final myEventsVM = Provider.of<MyEventsViewModel>(context, listen: false);
     final dashboardVM = Provider.of<DashboardViewModel>(context, listen: false);
 
+    // Parse capacity
+    final newCapacity = int.tryParse(_capacityController.text.trim()) ?? 0;
+
+    // Get current tickets sold from MyEventsViewModel
+    final currentTicketsSold = myEventsVM.ticketCounts[widget.event.id] ?? 0;
+
+    // Validate capacity against current tickets sold
+    if (newCapacity < currentTicketsSold) {
+      _showSnackBar(
+          "Capacity cannot be less than current tickets sold ($currentTicketsSold)",
+          Colors.red
+      );
+      return;
+    }
+
     // Show loading indicator
     showDialog(
       context: context,
@@ -235,6 +253,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
         poster: _posterController.text.trim(),
         category: selectedCategory!,
         creatorId: widget.event.creatorId, // Keep the same creator ID
+        capacity: newCapacity,
+        bookedCount: currentTicketsSold, // Use current tickets sold
       );
 
       // Update event using the view model
@@ -280,247 +300,329 @@ class _EditEventScreenState extends State<EditEventScreen> {
         foregroundColor: Colors.black,
         elevation: 1,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: "Event Title *",
-                  hintText: "Enter event title",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Please enter event title";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+      body: Consumer<MyEventsViewModel>(
+        builder: (context, myEventsVM, _) {
+          // Get current tickets sold from the view model
+          final currentTicketsSold = myEventsVM.ticketCounts[widget.event.id] ?? 0;
 
-              // Description
-              TextFormField(
-                controller: _descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: "Description *",
-                  hintText: "Enter event description",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Please enter event description";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Category Selection
-              InkWell(
-                onTap: _selectCategory,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _isValidCategory(selectedCategory) ? Colors.grey : Colors.red.shade300,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      labelText: "Event Title *",
+                      hintText: "Enter event title",
+                      border: OutlineInputBorder(),
                     ),
-                    borderRadius: BorderRadius.circular(4),
-                    color: selectedCategory != null ? _getCategoryColor(selectedCategory!).withOpacity(0.1) : null,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter event title";
+                      }
+                      return null;
+                    },
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                  const SizedBox(height: 16),
+
+                  // Description
+                  TextFormField(
+                    controller: _descriptionController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: "Description *",
+                      hintText: "Enter event description",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter event description";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Category Selection
+                  InkWell(
+                    onTap: _selectCategory,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _isValidCategory(selectedCategory) ? Colors.grey : Colors.red.shade300,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                        color: selectedCategory != null ? _getCategoryColor(selectedCategory!).withAlpha((255 * 0.1).round()) : null,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (selectedCategory != null) ...[
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(selectedCategory!),
-                                shape: BoxShape.circle,
+                          Row(
+                            children: [
+                              if (selectedCategory != null) ...[
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: _getCategoryColor(selectedCategory!),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                selectedCategory ?? "Select Category *",
+                                style: TextStyle(
+                                  color: selectedCategory != null ? Colors.black : Colors.grey[600],
+                                  fontSize: 16,
+                                  fontWeight: selectedCategory != null ? FontWeight.w500 : FontWeight.normal,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          Text(
-                            selectedCategory ?? "Select Category *",
-                            style: TextStyle(
-                              color: selectedCategory != null ? Colors.black : Colors.grey[600],
-                              fontSize: 16,
-                              fontWeight: selectedCategory != null ? FontWeight.w500 : FontWeight.normal,
-                            ),
+                              if (selectedCategory != null && _isValidCategory(selectedCategory)) ...[
+                                const SizedBox(width: 8),
+                                const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                              ],
+                            ],
                           ),
-                          if (selectedCategory != null && _isValidCategory(selectedCategory)) ...[
-                            const SizedBox(width: 8),
-                            const Icon(Icons.check_circle, color: Colors.green, size: 16),
-                          ],
+                          const Icon(Icons.arrow_drop_down),
                         ],
                       ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Location Dropdown
-              DropdownButtonFormField<String>(
-                value: selectedLocation,
-                decoration: const InputDecoration(
-                  labelText: "Location *",
-                  hintText: "Select location",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.location_on),
-                ),
-                items: locations.map((String location) {
-                  return DropdownMenuItem<String>(
-                    value: location,
-                    child: Text(location),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedLocation = newValue;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please select a location";
-                  }
-                  return null;
-                },
-                isExpanded: true,
-              ),
-              const SizedBox(height: 16),
-
-              // Date and Time Selection
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: _selectDate,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              selectedDate != null
-                                  ? _formatDate(selectedDate!)
-                                  : "Select Date *",
-                              style: TextStyle(
-                                color: selectedDate != null ? Colors.black : Colors.grey[600],
-                                fontSize: 16,
-                              ),
-                            ),
-                            const Icon(Icons.calendar_today),
-                          ],
-                        ),
-                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: InkWell(
-                      onTap: _selectTime,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              selectedTime != null
-                                  ? _formatTime(selectedTime!)
-                                  : "Select Time *",
-                              style: TextStyle(
-                                color: selectedTime != null ? Colors.black : Colors.grey[600],
-                                fontSize: 16,
-                              ),
+                  const SizedBox(height: 16),
+
+                  // Location Dropdown
+                  DropdownButtonFormField<String>(
+                    value: selectedLocation,
+                    decoration: const InputDecoration(
+                      labelText: "Location *",
+                      hintText: "Select location",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.location_on),
+                    ),
+                    items: locations.map((String location) {
+                      return DropdownMenuItem<String>(
+                        value: location,
+                        child: Text(location),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedLocation = newValue;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please select a location";
+                      }
+                      return null;
+                    },
+                    isExpanded: true,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Date and Time Selection
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: _selectDate,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
                             ),
-                            const Icon(Icons.access_time),
-                          ],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  selectedDate != null
+                                      ? _formatDate(selectedDate!)
+                                      : "Select Date *",
+                                  style: TextStyle(
+                                    color: selectedDate != null ? Colors.black : Colors.grey[600],
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const Icon(Icons.calendar_today),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: _selectTime,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  selectedTime != null
+                                      ? _formatTime(selectedTime!)
+                                      : "Select Time *",
+                                  style: TextStyle(
+                                    color: selectedTime != null ? Colors.black : Colors.grey[600],
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const Icon(Icons.access_time),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Price and Capacity Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _priceController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: "Price (RM) *",
+                            hintText: "Enter ticket price",
+                            border: OutlineInputBorder(),
+                            prefixText: "RM ",
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Please enter ticket price";
+                            }
+                            if (double.tryParse(value) == null) {
+                              return "Please enter a valid price";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _capacityController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: "Capacity *",
+                            hintText: "Enter max capacity",
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.group),
+                            helperStyle: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Please enter capacity";
+                            }
+                            final capacity = int.tryParse(value);
+                            if (capacity == null || capacity <= 0) {
+                              return "Please enter a valid capacity";
+                            }
+                            if (capacity < currentTicketsSold) {
+                              return "Cannot be less than tickets sold ($currentTicketsSold)";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Booking Status Info Card
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      border: Border.all(color: Colors.blue.shade200),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue.shade600),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Booking Status",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "$currentTicketsSold of ${widget.event.capacity} tickets sold",
+                                style: TextStyle(
+                                  color: Colors.blue.shade700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Poster URL
+                  TextFormField(
+                    controller: _posterController,
+                    decoration: const InputDecoration(
+                      labelText: "Poster Image URL",
+                      hintText: "Enter image URL (optional)",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Update Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _updateEvent,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[600],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Update Event",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Price
-              TextFormField(
-                controller: _priceController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Price (RM) *",
-                  hintText: "Enter ticket price",
-                  border: OutlineInputBorder(),
-                  prefixText: "RM ",
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Please enter ticket price";
-                  }
-                  if (double.tryParse(value) == null) {
-                    return "Please enter a valid price";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Poster URL
-              TextFormField(
-                controller: _posterController,
-                decoration: const InputDecoration(
-                  labelText: "Poster Image URL",
-                  hintText: "Enter image URL (optional)",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // Update Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _updateEvent,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Update Event",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

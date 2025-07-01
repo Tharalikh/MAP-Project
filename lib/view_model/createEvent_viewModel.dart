@@ -14,6 +14,7 @@ class CreateEventViewModel extends ChangeNotifier {
   String _time = '';
   String _price = '';
   String _poster = '';
+  int _capacity = 0;
 
   final EventService _eventService = EventService();
 
@@ -29,6 +30,7 @@ class CreateEventViewModel extends ChangeNotifier {
   String get time => _time;
   String get price => _price;
   String get poster => _poster;
+  int get capacity => _capacity;
 
   // Setters
   void setTitle(String title) {
@@ -93,10 +95,17 @@ class CreateEventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // New capacity setter
+  void setCapacity(int capacity) {
+    _capacity = capacity;
+    notifyListeners();
+  }
+
   Future<bool> saveEvent() async {
     try {
       print("=== SAVE EVENT DEBUG ===");
       print("Saving event with category: '$_category'");
+      print("Capacity: $_capacity");
 
       // Get current user
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -111,7 +120,13 @@ class CreateEventViewModel extends ChangeNotifier {
         return false;
       }
 
-      // Create EventModel with all required fields including creatorId
+      // Validate capacity
+      if (_capacity <= 0) {
+        print("ERROR: Capacity must be greater than 0");
+        return false;
+      }
+
+      // Create EventModel with all required fields including capacity
       final event = EventModel(
         id: const Uuid().v4(), // Generate unique ID
         title: _title,
@@ -122,12 +137,15 @@ class CreateEventViewModel extends ChangeNotifier {
         location: _location,
         poster: _poster,
         category: _category,
-        creatorId: currentUser.uid, // Set current user as creator
+        creatorId: currentUser.uid,
+        capacity: _capacity,
+        bookedCount: 0,
       );
 
       print("Event data being saved: ${event.toMap()}");
       print("Category in data: '${event.category}'");
       print("Creator ID: '${event.creatorId}'");
+      print("Capacity: ${event.capacity}");
 
       // Save using EventService
       await _eventService.createEvent(event);
@@ -144,12 +162,13 @@ class CreateEventViewModel extends ChangeNotifier {
     }
   }
 
-  // NEW: Update event functionality
+  // UPDATE: Update event functionality with capacity support
   Future<bool> updateEvent(EventModel event) async {
     try {
       print("=== UPDATE EVENT DEBUG ===");
       print("Updating event with ID: '${event.id}'");
       print("Category: '${event.category}'");
+      print("Capacity: ${event.capacity}");
 
       // Get current user
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -170,6 +189,18 @@ class CreateEventViewModel extends ChangeNotifier {
         return false;
       }
 
+      // Validate capacity
+      if (event.capacity <= 0) {
+        print("ERROR: Capacity must be greater than 0");
+        return false;
+      }
+
+      // Check if new capacity is less than current bookings
+      if (event.capacity < event.bookedCount) {
+        print("ERROR: Cannot reduce capacity below current bookings (${event.bookedCount})");
+        return false;
+      }
+
       print("Event data being updated: ${event.toMap()}");
 
       // Update using EventService
@@ -184,7 +215,7 @@ class CreateEventViewModel extends ChangeNotifier {
     }
   }
 
-  // NEW: Alternative method using direct Firestore for update
+  // UPDATE: Alternative method using direct Firestore for update with capacity
   Future<bool> updateEventDirectly(EventModel event) async {
     try {
       print("=== UPDATE EVENT DIRECTLY DEBUG ===");
@@ -209,6 +240,18 @@ class CreateEventViewModel extends ChangeNotifier {
         return false;
       }
 
+      // Validate capacity
+      if (event.capacity <= 0) {
+        print("ERROR: Capacity must be greater than 0");
+        return false;
+      }
+
+      // Check if new capacity is less than current bookings
+      if (event.capacity < event.bookedCount) {
+        print("ERROR: Cannot reduce capacity below current bookings (${event.bookedCount})");
+        return false;
+      }
+
       final eventData = {
         'id': event.id,
         'title': event.title,
@@ -220,6 +263,8 @@ class CreateEventViewModel extends ChangeNotifier {
         'price': event.price,
         'poster': event.poster,
         'creatorId': event.creatorId,
+        'capacity': event.capacity,
+        'bookedCount': event.bookedCount,
         'updatedAt': FieldValue.serverTimestamp(),
       };
 
@@ -245,6 +290,7 @@ class CreateEventViewModel extends ChangeNotifier {
     try {
       print("=== SAVE EVENT DEBUG ===");
       print("Saving event with category: '$_category'");
+      print("Capacity: $_capacity");
 
       // Get current user
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -256,6 +302,12 @@ class CreateEventViewModel extends ChangeNotifier {
       // Double-check category before saving
       if (!validCategories.contains(_category)) {
         print("ERROR: Attempting to save invalid category '$_category'");
+        return false;
+      }
+
+      // Validate capacity
+      if (_capacity <= 0) {
+        print("ERROR: Capacity must be greater than 0");
         return false;
       }
 
@@ -272,18 +324,21 @@ class CreateEventViewModel extends ChangeNotifier {
         'time': _time,
         'price': _price,
         'poster': _poster,
-        'creatorId': currentUser.uid, // Add creator ID
+        'creatorId': currentUser.uid,
+        'capacity': _capacity,
+        'bookedCount': 0,
         'createdAt': FieldValue.serverTimestamp(),
       };
 
       print("Event data being saved: $eventData");
       print("Category in data: '${eventData['category']}'");
       print("Creator ID: '${eventData['creatorId']}'");
+      print("Capacity: '${eventData['capacity']}'");
 
       // Save to Firestore
       await FirebaseFirestore.instance
           .collection('events')
-          .doc(eventId) // Use the generated ID as document ID
+          .doc(eventId)
           .set(eventData);
 
       print("Event saved successfully");
@@ -307,6 +362,7 @@ class CreateEventViewModel extends ChangeNotifier {
     _time = '';
     _price = '';
     _poster = '';
+    _capacity = 0;
     notifyListeners();
   }
 
@@ -318,5 +374,10 @@ class CreateEventViewModel extends ChangeNotifier {
   // Get current user ID
   String? get currentUserId {
     return FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  // Helper method to validate capacity against current bookings
+  bool isCapacityValid(int newCapacity, int currentBookings) {
+    return newCapacity > 0 && newCapacity >= currentBookings;
   }
 }

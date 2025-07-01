@@ -9,6 +9,8 @@ class EventModel {
   final String poster;
   final String category;
   final String creatorId;
+  final int capacity;
+  final int bookedCount;
 
   EventModel({
     required this.id,
@@ -21,6 +23,8 @@ class EventModel {
     required this.poster,
     required this.category,
     required this.creatorId,
+    required this.capacity,
+    this.bookedCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +39,8 @@ class EventModel {
       'poster': poster,
       'category': category,
       'creatorId': creatorId,
+      'capacity': capacity,
+      'bookedCount': bookedCount,
     };
   }
 
@@ -50,6 +56,58 @@ class EventModel {
       poster: map['poster'] ?? '',
       category: map['category'] ?? '',
       creatorId: map['creatorId'] ?? '',
+      capacity: map['capacity'] ?? 0,
+      bookedCount: map['bookedCount'] ?? 0,
     );
   }
+
+  EventModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? date,
+    String? time,
+    String? price,
+    String? location,
+    String? poster,
+    String? category,
+    String? creatorId,
+    int? capacity,
+    int? bookedCount,
+  }) {
+    return EventModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      date: date ?? this.date,
+      time: time ?? this.time,
+      price: price ?? this.price,
+      location: location ?? this.location,
+      poster: poster ?? this.poster,
+      category: category ?? this.category,
+      creatorId: creatorId ?? this.creatorId,
+      capacity: capacity ?? this.capacity,
+      bookedCount: bookedCount ?? this.bookedCount,
+    );
+  }
+
+  bool get isFullyBooked => bookedCount >= capacity;
+
+  int get remainingCapacity => capacity - bookedCount;
+
+  double get capacityPercentage => capacity > 0 ? bookedCount / capacity : 0.0;
+
+  @override
+  String toString() {
+    return 'EventModel(id: $id, title: $title, category: $category, capacity: $capacity, bookedCount: $bookedCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EventModel && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

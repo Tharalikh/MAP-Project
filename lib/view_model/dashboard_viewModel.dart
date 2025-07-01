@@ -38,10 +38,18 @@ class DashboardViewModel extends ChangeNotifier {
 
         print("After filtering past events: ${_allEvents.length} upcoming events");
 
-        // Debug print all events
+        // Debug print all events with capacity info
         for (int i = 0; i < _allEvents.length; i++) {
           final event = _allEvents[i];
-          print("Event $i: ${event.title} - ${event.category} - ${event.location} - ${event.date}");
+          print("""
+          Event $i: 
+          Title: ${event.title} 
+          Category: ${event.category} 
+          Location: ${event.location} 
+          Date: ${event.date}
+          Capacity: ${event.bookedCount}/${event.capacity}
+          Remaining: ${event.remainingCapacity}
+          """);
         }
       }
 
@@ -125,6 +133,7 @@ class DashboardViewModel extends ChangeNotifier {
 
       if (matches) {
         print("✓ Event '${event.title}' matches all filters");
+        print("  Capacity: ${event.bookedCount}/${event.capacity}");
       }
 
       return matches;
@@ -165,6 +174,28 @@ class DashboardViewModel extends ChangeNotifier {
         print("Removed ${originalCount - _allEvents.length} past events during refresh");
         notifyListeners();
       }
+    }
+  }
+
+  // Helper method to get capacity status text
+  String getCapacityStatus(EventModel event) {
+    if (event.isFullyBooked) {
+      return 'Sold Out';
+    } else if (event.remainingCapacity < 10) {
+      return 'Only ${event.remainingCapacity} left!';
+    } else {
+      return '${event.remainingCapacity} available';
+    }
+  }
+
+  // Helper method to get capacity color
+  Color getCapacityColor(EventModel event) {
+    if (event.isFullyBooked) {
+      return Colors.red;
+    } else if (event.remainingCapacity < 10) {
+      return Colors.orange;
+    } else {
+      return Colors.green;
     }
   }
 }
