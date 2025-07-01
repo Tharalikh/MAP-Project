@@ -32,4 +32,11 @@ class TicketService {
     });
   }
 
+  Future<int> getTicketCountForEvent(String eventId) async {
+    final snapshot = await _ticketCollection
+        .where('eventId', isEqualTo: eventId)
+        .get();
+
+    return snapshot.size;
+  }
 }

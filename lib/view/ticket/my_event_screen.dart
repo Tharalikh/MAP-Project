@@ -103,6 +103,7 @@ class _MyEventsScreenState extends State<MyEventsScreen> {
               itemCount: vm.myEvents.length,
               itemBuilder: (context, index) {
                 final event = vm.myEvents[index];
+                final ticketsSold = vm.ticketCounts[event.id] ?? 0;
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
                   shape: RoundedRectangleBorder(
@@ -226,6 +227,16 @@ class _MyEventsScreenState extends State<MyEventsScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.confirmation_num_outlined, size: 16, color: Colors.grey[600]),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Tickets sold: $ticketsSold",
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),

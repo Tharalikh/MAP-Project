@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../model/event_model.dart';
 import '../services/event_service.dart';
+import '../services/ticket_service.dart';
 
 class MyEventsViewModel extends ChangeNotifier {
   final List<EventModel> _myEvents = [];
   final EventService _eventService = EventService();
+  final TicketService _ticketService = TicketService();
   bool _isLoading = false;
+  final Map<String, int> _ticketCounts = {};
 
   List<EventModel> get myEvents => _myEvents;
   bool get isLoading => _isLoading;
+  Map<String, int> get ticketCounts => _ticketCounts;
 
   // Fetch current user's created events from Firebase
   Future<void> fetchMyEvents() async {
@@ -21,10 +25,17 @@ class MyEventsViewModel extends ChangeNotifier {
       final userEvents = await _eventService.getCurrentUserEvents();
       _myEvents.clear();
       _myEvents.addAll(userEvents);
+
+      _ticketCounts.clear();
+      for (var event in _myEvents) {
+        final count = await _ticketService.getTicketCountForEvent(event.id);
+        _ticketCounts[event.id] = count;
+      }
     } catch (e) {
       print('Error fetching my events: $e');
       // Handle the case where no user is logged in
       _myEvents.clear();
+      _ticketCounts.clear();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -48,6 +59,7 @@ class MyEventsViewModel extends ChangeNotifier {
       await _eventService.deleteEvent(id);
       // Remove from local list
       _myEvents.removeWhere((e) => e.id == id);
+      _ticketCounts.remove(id);
       notifyListeners();
     } catch (e) {
       print('Error removing event: $e');
