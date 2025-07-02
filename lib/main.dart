@@ -20,6 +20,7 @@ import 'view_model/ticket_viewModel.dart';
 import 'view_model/purchase_viewModel.dart';
 import 'view_model/createEvent_viewModel.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Future<void> setup() async {

@@ -52,6 +52,8 @@ dependencies:
   permission_handler: ^11.0.1
   device_info_plus: ^9.1.0
   share_plus: ^10.0.2
+  flutter_local_notifications: ^17.1.2
+
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
@@ -113,3 +115,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+

@@ -1,11 +1,9 @@
-import 'package:festquest/view/purchase/subs_payment_screen.dart';
 import 'package:festquest/view/ticket/edit_event_screen.dart';
 import 'package:flutter/material.dart';
 import '../view/register/register_screen.dart';
 import '../view/register/forgotPass_screen.dart';
 import '../view/profile/profile_screen.dart';
 import '../view/profile/editProfile_screen.dart';
-import '../view/purchase/subscription_screen.dart';
 import '../view/notification/notification_screen.dart';
 import '../view/core/themes/main_scaffold.dart';
 import '../view/purchase/event_detail_screen.dart';
@@ -30,8 +28,6 @@ class FestQuestApp extends StatelessWidget {
         '/dashboard': (context) => const MainScaffold(),
         '/profile': (context) => const ProfileScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),
-        '/subscription': (context) => const SubscriptionScreen(),
-        '/subscription/payment_method': (context) => const SubscriptionPaymentMethodScreen(),
         '/notification': (context) => const NotificationScreen(),
         '/ticket': (context) => const MainScaffold(),
         '/search': (context) => const MainScaffold(),
