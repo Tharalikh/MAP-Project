@@ -65,9 +65,11 @@ class SearchScreen extends StatelessWidget {
                   title: Text(event.title),
                   subtitle: Text(event.date),
                   // Add more fields as you wish
-                  onTap: () {
-                    // Navigate to event details if needed
-                  },
+                  onTap: () => Navigator.pushNamed (
+                    context,
+                    '/event_detail',
+                    arguments: event.id,
+                  ),
                 );
               },
             ),

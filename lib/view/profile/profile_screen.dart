@@ -56,24 +56,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Icon(Icons.confirmation_num),
             title: Text('My Ticket'),
             onTap: () {
-              Navigator.pushNamed(context, '/ticket');
+              Navigator.pushNamed(context, '/ticket',arguments: 0,);
             },
           ),
-          const ListTile(
-            leading: Icon(Icons.card_giftcard),
-            title: Text('My Voucher'),
-          ),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.history),
             title: Text('Transaction History'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Privacy and Security'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.credit_card),
-            title: Text('Payment Method'),
+            onTap: () {
+              Navigator.pushNamed(context, '/ticket', arguments: 1,);
+            },
           ),
           ElevatedButton(
             child: const Text('Sign Out'),

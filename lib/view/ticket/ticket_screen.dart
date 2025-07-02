@@ -6,7 +6,8 @@ import '../../view_model/ticket_viewModel.dart';
 import '../../model/ticket_model.dart';
 
 class TicketScreen extends StatefulWidget {
-  const TicketScreen({super.key});
+  final int initialTabIndex;
+  const TicketScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<TicketScreen> createState() => _TicketScreenState();
@@ -19,7 +20,7 @@ class _TicketScreenState extends State<TicketScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialTabIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TicketViewModel>(context, listen: false).loadUserTickets();
     });

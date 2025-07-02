@@ -19,6 +19,13 @@ class SearchViewModel extends ChangeNotifier {
 
   Future<void> fetchEvents() async {
     _allEvents = await _eventService.getAllEvents();
+
+    final now = DateTime.now();
+    _allEvents = _allEvents.where((event) {
+      DateTime eventDate = DateTime.parse(event.date);
+      return eventDate.isAfter(now);
+    }).toList();
+
     print("Fetched events: ${_allEvents.length}");
     _filteredEvents = _allEvents;
     notifyListeners();

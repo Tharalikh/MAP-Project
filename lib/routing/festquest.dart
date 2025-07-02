@@ -1,11 +1,10 @@
-import 'package:festquest/view/purchase/subs_payment_screen.dart';
 import 'package:festquest/view/ticket/edit_event_screen.dart';
+import 'package:festquest/view/ticket/ticket_screen.dart';
 import 'package:flutter/material.dart';
 import '../view/register/register_screen.dart';
 import '../view/register/forgotPass_screen.dart';
 import '../view/profile/profile_screen.dart';
 import '../view/profile/editProfile_screen.dart';
-import '../view/purchase/subscription_screen.dart';
 import '../view/notification/notification_screen.dart';
 import '../view/core/themes/main_scaffold.dart';
 import '../view/purchase/event_detail_screen.dart';
@@ -13,6 +12,7 @@ import '../view/ticket/my_event_screen.dart';
 import '../view/login/login_screen.dart';
 import '../view/ticket/create_event_screen.dart';
 import '../model/event_model.dart';
+
 
 class FestQuestApp extends StatelessWidget {
   const FestQuestApp({super.key});
@@ -30,10 +30,7 @@ class FestQuestApp extends StatelessWidget {
         '/dashboard': (context) => const MainScaffold(),
         '/profile': (context) => const ProfileScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),
-        '/subscription': (context) => const SubscriptionScreen(),
-        '/subscription/payment_method': (context) => const SubscriptionPaymentMethodScreen(),
         '/notification': (context) => const NotificationScreen(),
-        '/ticket': (context) => const MainScaffold(),
         '/search': (context) => const MainScaffold(),
         '/my_event': (context) => const MyEventsScreen(),
         '/create_event': (context) => const CreateEventScreen(),
@@ -59,6 +56,12 @@ class FestQuestApp extends StatelessWidget {
           }
         }
 
+        if (settings.name == '/ticket') {
+          final initialTabIndex = settings.arguments as int ?? 0;
+          return MaterialPageRoute(
+            builder: (_) => TicketScreen(initialTabIndex: initialTabIndex),
+          );
+        }
         // Return null to let Flutter handle the route with the regular routes table
         return null;
       },
