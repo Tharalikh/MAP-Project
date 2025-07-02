@@ -40,13 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               GestureDetector(
-                onTap: () => Navigator.pushNamed(context, '/subscription'),
-                child: const Text(
-                  'Subscription',
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              ),
-              GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/edit_profile'),
                 child: const Text(
                   'Edit Profile',

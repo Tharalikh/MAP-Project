@@ -38,6 +38,17 @@ class _TicketScreenState extends State<TicketScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Ticket'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none),
+            onPressed: () => Navigator.pushNamed(context, '/notification'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
+          ),
+          const SizedBox(width: 10),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
