@@ -13,7 +13,6 @@ import 'view_model/login_viewModel.dart';
 import 'view_model/dashboard_viewModel.dart';
 import 'view_model/profile_viewModel.dart';
 import 'view_model/editProfile_viewModel.dart';
-import 'package:festquest/view_model/subscription_viewModel.dart';
 import 'view_model/notification_viewModel.dart';
 import 'view_model/search_viewModel.dart';
 import 'view_model/ticket_viewModel.dart';
@@ -39,7 +38,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CreateEventViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
-        ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => SearchViewModel()),
         ChangeNotifierProvider(create: (_) => TicketViewModel()),
