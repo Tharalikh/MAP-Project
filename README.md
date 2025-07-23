@@ -33,48 +33,51 @@
 
 ---
 
-## 🗂 Project Structurefestquest/
+## 🗂 Project Structure
+```bash
+festquest/
 ├── lib/
 │ ├── main.dart
 │ ├── models/
-│ │ ├── event_model.dart
-│ │ ├── organizer_model.dart
-│ │ ├── ticket_model.dart
-│ │ ├── user_model.dart
+│ │   ├── event_model.dart
+│ │   ├── organizer_model.dart
+│ │   ├── ticket_model.dart
+│ │   ├── user_model.dart
 │ ├── routing/
-│ │ ├── festquest.dart
+│ │   ├── festquest.dart
 │ ├── services/
-│ │ ├── event_service.dart
-│ │ ├── notification_service.dart
-│ │ ├── organizer_service.dart
-│ │ ├── paymentGateaway_service.dart
-│ │ ├── service.dart
-│ │ ├── shared_preference.dart
-│ │ ├── ticket_service.dart
-│ │ ├── user_service.dart
+│ │   ├── event_service.dart
+│ │   ├── notification_service.dart
+│ │   ├── organizer_service.dart
+│ │   ├── paymentGateaway_service.dart
+│ │   ├── service.dart
+│ │   ├── shared_preference.dart
+│ │   ├── ticket_service.dart
+│ │   ├── user_service.dart
 │ ├── viewmodels/
-│ │ ├── createEvent_viewModel.dart
-│ │ ├── dashboaard_viewModel.dart
-│ │ ├── editProfile_viewModel.dart
-│ │ ├── forgot_viewModel.dart
-│ │ ├── login_viewModel.dart
-│ │ ├── my_event_viewModel.dart
-│ │ ├── notification_viewModel.dart
-│ │ ├── profile_viewModel.dart
-│ │ ├── purchase_viewModel.dart
-│ │ ├── register_viewModel.dart
-│ │ ├── search_viewModel.dart
-│ │ ├── ticket_viewModel.dart
+│ │   ├── createEvent_viewModel.dart
+│ │   ├── dashboaard_viewModel.dart
+│ │   ├── editProfile_viewModel.dart
+│ │   ├── forgot_viewModel.dart
+│ │   ├── login_viewModel.dart
+│ │   ├── my_event_viewModel.dart
+│ │   ├── notification_viewModel.dart
+│ │   ├── profile_viewModel.dart
+│ │   ├── purchase_viewModel.dart
+│ │   ├── register_viewModel.dart
+│ │   ├── search_viewModel.dart
+│ │   ├── ticket_viewModel.dart
 │ ├── views/
-│ │ ├── core/themes
-│ │ ├── dashboard
-│ │ ├── login
-│ │ ├── notification
-│ │ ├── profile
-│ │ ├── purchase
-│ │ ├── register
-│ │ ├── search
-│ │ ├── ticket
+│ │   ├── core/themes
+│ │   ├── dashboard
+│ │   ├── login
+│ │   ├── notification
+│ │   ├── profile
+│ │   ├── purchase
+│ │   ├── register
+│ │   ├── search
+│ │   ├── ticket
+```
 ---
 
 ## ⚙️ Getting Started
